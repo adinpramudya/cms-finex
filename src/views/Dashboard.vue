@@ -14,7 +14,8 @@
 </template>
 <script lang="ts">
 import Card from "@/components/Card.vue";
-import { useToast } from "vue-toastification";
+import { useToast, POSITION } from "vue-toastification";
+import { onMounted } from "vue";
 export default {
   components: {
     Card,
@@ -43,7 +44,7 @@ export default {
   methods: {},
   created() {
     this.toast("Selamat Datang di Dashboard Admin", {
-      position: "top-right",
+      position: this.position,
       timeout: false,
       closeOnClick: false,
       pauseOnFocusLoss: true,
@@ -59,7 +60,10 @@ export default {
   },
   setup() {
     const toast = useToast();
-    return { toast };
+    const position: POSITION | undefined = "top-right" as POSITION;
+
+    onMounted(() => {});
+    return { toast, position };
   },
 };
 </script>
