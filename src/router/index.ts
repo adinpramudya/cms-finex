@@ -11,6 +11,14 @@ const routes = [
     component: () => import("@/views/Berita/Berita.vue"),
   },
   {
+    path: "/login",
+    component: () => import("@/views/Login.vue"),
+  },
+  {
+    path: "/galeri",
+    component: () => import("@/views/Galeri/Galeri.vue"),
+  },
+  {
     path: "/produk",
     component: () => import("@/views/Produk/Produk.vue"),
   },
@@ -24,14 +32,19 @@ const routes = [
     component: () => import("@/views/Berita/AddChangeBerita.vue"),
   },
   {
+    path: "/berita/:id/ubah-berita",
+    name: "UbahBerita",
+    component: () => import("@/views/Berita/AddChangeBerita.vue"),
+  },
+  {
     path: "/produk/tambah-produk",
     name: "TambahProduk",
     component: () => import("@/views/Produk/AddChangeProduk.vue"),
   },
   {
-    path: "/berita/:id/ubah-berita",
-    name: "UbahBerita",
-    component: () => import("@/views/Berita/AddChangeBerita.vue"),
+    path: "/galeri/tambah-galeri",
+    name: "TambahGaleri",
+    component: () => import("@/views/Galeri/AddChangeGaleri.vue"),
   },
 ];
 

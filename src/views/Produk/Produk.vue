@@ -13,6 +13,19 @@
         TAMBAH PRODUK
       </v-btn>
     </div>
+    <v-card-text>
+      <v-text-field
+        :loading="loading"
+        density="compact"
+        variant="solo"
+        label="Cari Produk"
+        append-inner-icon="mdi-magnify"
+        single-line
+        hide-details
+        v-model="searchText"
+        @click:append-inner="onClick"
+      ></v-text-field>
+    </v-card-text>
     <v-data-table
       class="mt-5"
       :headers="headers"
@@ -47,6 +60,12 @@
       </template>
       <template v-slot:item.actions="{ item }">
         <v-icon size="small" class="me-2" @click="editItem(item)">
+          mdi-eye-outline
+        </v-icon>
+        <v-icon size="small" class="me-2 d-none" @click="editItem(item)">
+          mdi-eye-off-outline
+        </v-icon>
+        <v-icon size="small" class="me-2" @click="editItem(item)">
           mdi-pencil
         </v-icon>
         <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
@@ -68,6 +87,7 @@ import router from "@/router";
 
 export default {
   data: () => ({
+    searchText: "",
     dialog: false,
     dialogDelete: false,
     headers: [

@@ -3,19 +3,33 @@
     <div class="d-flex justify-space-between">
       <div class="d-flex align-center">
         <hr width="48px" color="black" />
-        <h1 class="ml-4 text-h4 font-weight-medium">Berita</h1>
+        <h1 class="ml-4 text-h4 font-weight-medium">Galeri</h1>
       </div>
       <v-btn
         prepend-icon="mdi-plus"
         class="bg-wood color-sunglow"
-        @click="toAddBerita"
+        @click="toAddGaleri"
       >
-        TAMBAH BERITA
+        TAMBAH GALERI
       </v-btn>
     </div>
+    <v-card-text>
+      <v-text-field
+        :loading="loading"
+        density="compact"
+        variant="solo"
+        label="Cari Galeri"
+        append-inner-icon="mdi-magnify"
+        single-line
+        hide-details
+        v-model="searchText"
+        @click:append-inner="onClick"
+      ></v-text-field>
+    </v-card-text>
     <v-data-table
       class="mt-5"
       :headers="headers"
+      :search="searchTexts"
       :thead-class="'thead-custom'"
       :items="desserts"
       :items-per-page="'7'"
@@ -47,6 +61,13 @@
       </template>
       <template v-slot:item.actions="{ item }">
         <v-icon size="small" class="me-2" @click="editItem(item)">
+          mdi-eye-outline
+        </v-icon>
+        <v-icon size="small" class="me-2 d-none" @click="editItem(item)">
+          mdi-eye-off-outline
+        </v-icon>
+
+        <v-icon size="small" class="me-2" @click="editItem(item)">
           mdi-pencil
         </v-icon>
         <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
@@ -68,6 +89,7 @@ import router from "@/router";
 
 export default {
   data: () => ({
+    searchText: "",
     dialog: false,
     dialogDelete: false,
     headers: [
@@ -122,8 +144,8 @@ export default {
   },
 
   methods: {
-    toAddBerita() {
-      router.push({ name: "TambahBerita" });
+    toAddGaleri() {
+      router.push({ name: "TambahGaleri" });
     },
     initialize() {
       this.desserts = [
