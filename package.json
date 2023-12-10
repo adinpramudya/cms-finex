@@ -1,0 +1,47 @@
+{
+  "name": "cms-finex",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --fix --ignore-path .gitignore"
+  },
+  "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^40.1.0",
+    "@ckeditor/ckeditor5-vue": "^5.1.0",
+    "@mdi/font": "7.0.96",
+    "@tiptap/pm": "^2.1.13",
+    "@tiptap/starter-kit": "^2.1.13",
+    "@tiptap/vue-3": "^2.1.13",
+    "@vuelidate/core": "^2.0.3",
+    "@vuelidate/validators": "^2.0.4",
+    "ckeditor5-vue": "^0.0.7",
+    "pinia": "^2.0.23",
+    "quill": "^1.3.7",
+    "roboto-fontface": "*",
+    "vue": "^3.2.0",
+    "vue-quill-editor": "^3.0.6",
+    "vue-router": "^4.0.0",
+    "vue-toastification": "^2.0.0-rc.5",
+    "vue2-editor": "^2.10.3",
+    "vuetify": "^3.4.6",
+    "vuetify-pro-tiptap": "^2.3.0"
+  },
+  "devDependencies": {
+    "@babel/types": "^7.21.4",
+    "@types/node": "^18.15.0",
+    "@types/vue": "^2.0.0",
+    "@types/vue2-editor": "^2.6.5",
+    "@vitejs/plugin-vue": "^4.5.2",
+    "@vue/eslint-config-typescript": "^11.0.0",
+    "eslint": "^8.0.0",
+    "eslint-plugin-vue": "^9.0.0",
+    "sass": "^1.69.5",
+    "typescript": "^5.0.0",
+    "unplugin-fonts": "^1.0.3",
+    "vite": "^4.2.0",
+    "vite-plugin-vuetify": "^1.0.0",
+    "vue-tsc": "^1.2.0"
+  }
+}
