@@ -7,7 +7,12 @@
 
     <div class="mt-4 d-flex justify-space-between">
       <div v-for="item in card" class="w-100 mx-3">
-        <Card :title="item.title" :value="item.value" :image="item.image" />
+        <Card
+          :title="item.title"
+          :value="item.value"
+          :image="item.image"
+          :image-bw="item.imageBw"
+        />
       </div>
     </div>
   </div>
@@ -26,17 +31,20 @@ export default {
         {
           title: "Produk",
           value: 4,
-          image: "../../src/assets/icons/ic-product",
+          image: "../../src/assets/icons/ic-product.png",
+          imageBw: "../../src/assets/icons/ic-product-bw.png",
         },
         {
           title: "Galeri",
           value: 4,
-          image: "../../src/assets/icons/galeri",
+          image: "../../src/assets/icons/galeri.png",
+          imageBw: "../../src/assets/icons/galeri-bw.png",
         },
         {
           title: "Berita",
           value: 4,
-          image: "../../src/assets/icons/berita",
+          image: "../../src/assets/icons/berita.png",
+          imageBw: "../../src/assets/icons/berita-bw.png",
         },
       ],
     };
