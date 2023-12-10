@@ -1,22 +1,13 @@
 <template>
   <div class="card">
     <div class="d-flex">
-      <img
-        :src="`../../src/assets/icons/${image}.png`"
-        :alt="image"
-        width="56"
-      />
+      <img :src="`${image}.png`" :alt="image" width="56" />
       <div class="ml-4">
         <h3 class="font-size-18 font-weight-300">{{ title }}</h3>
         <p class="font-size-14 color-primary">{{ value }}</p>
       </div>
     </div>
-    <img
-      class="img-bw"
-      :src="`../../src/assets/icons/${image}-bw.png`"
-      :alt="image"
-      width="50"
-    />
+    <img class="img-bw" :src="`${image}-bw.png`" :alt="image" width="50" />
   </div>
 </template>
 

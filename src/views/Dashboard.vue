@@ -26,17 +26,17 @@ export default {
         {
           title: "Produk",
           value: 4,
-          image: "ic-product",
+          image: "../../src/assets/icons/ic-product",
         },
         {
           title: "Galeri",
           value: 4,
-          image: "galeri",
+          image: "../../src/assets/icons/galeri",
         },
         {
           title: "Berita",
           value: 4,
-          image: "berita",
+          image: "../../src/assets/icons/berita",
         },
       ],
     };
