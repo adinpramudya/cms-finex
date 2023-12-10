@@ -12,7 +12,6 @@ import Vuelidate from "@vuelidate/core";
 // import "@vuelidate/core/dist/all.css";
 // import VueEditor from "vue2-editor";
 import CKEditor from "@ckeditor/ckeditor5-vue";
-import { VueEditor } from "vue2-editor";
 // Components
 import App from "./App.vue";
 
@@ -26,5 +25,4 @@ app.use(Toast);
 // app.use(VueEditor);
 app.use(Vuelidate);
 app.use(CKEditor);
-app.use(VueEditor);
 app.mount("#app");
