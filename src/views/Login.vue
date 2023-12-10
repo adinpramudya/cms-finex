@@ -18,7 +18,7 @@
         prepend-inner-icon="mdi-account-key"
       ></v-text-field>
 
-      <v-btn color="#FFC93C">MASUK</v-btn>
+      <v-btn color="#FFC93C" @click="login">MASUK</v-btn>
     </div>
   </div>
 </template>
@@ -39,3 +39,11 @@
   background-color: var(--woodsmkoke);
 }
 </style>
+
+<script setup>
+import router from "@/router";
+
+const login = () => {
+  router.push("/");
+};
+</script>

@@ -31,20 +31,20 @@ export default {
         {
           title: "Produk",
           value: 4,
-          image: "../../src/assets/icons/ic-product.png",
-          imageBw: "../../src/assets/icons/ic-product-bw.png",
+          image: "public/icons/ic-product.png",
+          imageBw: "public/icons/ic-product-bw.png",
         },
         {
           title: "Galeri",
           value: 4,
-          image: "../../src/assets/icons/galeri.png",
-          imageBw: "../../src/assets/icons/galeri-bw.png",
+          image: "public/icons/galeri.png",
+          imageBw: "public/icons/galeri-bw.png",
         },
         {
           title: "Berita",
           value: 4,
-          image: "../../src/assets/icons/berita.png",
-          imageBw: "../../src/assets/icons/berita-bw.png",
+          image: "public/icons/berita.png",
+          imageBw: "public/icons/berita-bw.png",
         },
       ],
     };
@@ -70,7 +70,6 @@ export default {
     const toast = useToast();
     const position: POSITION | undefined = "top-right" as POSITION;
 
-    onMounted(() => {});
     return { toast, position };
   },
 };

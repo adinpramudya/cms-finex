@@ -40,7 +40,9 @@
                     <v-divider class="my-3"></v-divider>
                     <v-btn rounded variant="text"> Edit Account </v-btn>
                     <v-divider class="my-3"></v-divider>
-                    <v-btn rounded variant="text"> Disconnect </v-btn>
+                    <v-btn rounded variant="text" @click="logout">
+                      Disconnect
+                    </v-btn>
                   </div>
                 </v-card-text>
               </v-card>
@@ -109,6 +111,8 @@
 }
 </style>
 <script>
+import router from "@/router";
+
 export default {
   data: () => ({
     user: {
@@ -117,5 +121,10 @@ export default {
       email: "john.doe@doe.com",
     },
   }),
+  methods: {
+    logout() {
+      router.push("/login");
+    },
+  },
 };
 </script>

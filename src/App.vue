@@ -53,6 +53,8 @@ onMounted(() => {
 watch(currentRoute, (newRoute) => {
   if (currentRoute.value.path == "/login") {
     isShow.value = false;
+  } else {
+    isShow.value = true;
   }
 });
 </script>
