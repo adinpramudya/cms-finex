@@ -23,7 +23,6 @@
       :append-inner-icon="
         state.image ? ' mdi-check-circle-outline' : ' mdi-close-circle-outline'
       "
-      multiple
     ></v-file-input>
 
     <h4 class="text-h5 font-weight-medium">Preview</h4>

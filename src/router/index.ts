@@ -15,6 +15,10 @@ const routes = [
     component: () => import("@/views/Produk/Produk.vue"),
   },
   {
+    path: "/profile",
+    component: () => import("@/views/Profile/Profile.vue"),
+  },
+  {
     path: "/berita/tambah-berita",
     name: "TambahBerita",
     component: () => import("@/views/Berita/AddChangeBerita.vue"),

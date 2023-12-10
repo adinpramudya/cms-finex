@@ -5,18 +5,49 @@
         <img src="../assets/Finex.png" alt="logo" height="37" />
       </v-col>
       <v-col :cols="10" class="bg-sunglow right">
-        <div class="wrapper-hamburger">
-          <button
-            id="hamburger"
-            name="hamburger"
-            type="button"
-            style="display: block"
-          >
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-          </button></div
-      ></v-col>
+        <div class="d-flex justify-space-between w-100">
+          <div class="wrapper-hamburger">
+            <button
+              id="hamburger"
+              name="hamburger"
+              type="button"
+              style="display: block"
+            >
+              <span class="hamburger-line"></span>
+              <span class="hamburger-line"></span>
+              <span class="hamburger-line"></span>
+            </button>
+          </div>
+          <v-row justify="end" class="ml-auto">
+            <v-menu min-width="200px" rounded>
+              <template v-slot:activator="{ props }">
+                <v-btn icon v-bind="props">
+                  <v-avatar color="brown" size="large">
+                    <span class="text-h5">{{ user.initials }}</span>
+                  </v-avatar>
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-text>
+                  <div class="mx-auto text-center">
+                    <v-avatar color="brown">
+                      <span class="text-h5">{{ user.initials }}</span>
+                    </v-avatar>
+                    <h3>{{ user.fullName }}</h3>
+                    <p class="text-caption mt-1">
+                      {{ user.email }}
+                    </p>
+                    <v-divider class="my-3"></v-divider>
+                    <v-btn rounded variant="text"> Edit Account </v-btn>
+                    <v-divider class="my-3"></v-divider>
+                    <v-btn rounded variant="text"> Disconnect </v-btn>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-menu>
+          </v-row>
+        </div>
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -77,3 +108,14 @@
   }
 }
 </style>
+<script>
+export default {
+  data: () => ({
+    user: {
+      initials: "JD",
+      fullName: "John Doe",
+      email: "john.doe@doe.com",
+    },
+  }),
+};
+</script>

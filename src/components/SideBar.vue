@@ -32,7 +32,13 @@
           value="produk"
           to="/produk"
         ></v-list-item>
-        <v-list v-model:opened="open">
+        <v-list-item
+          prepend-icon="mdi-domain"
+          title="Profil Perusahaan"
+          value="profil"
+          to="/profile"
+        ></v-list-item>
+        <!-- <v-list v-model:opened="open">
           <v-list-group value="Users">
             <template v-slot:activator="{ props }">
               <v-list-item
@@ -44,23 +50,31 @@
             </template>
 
             <v-list-item
-              prepend-icon="mdi-account-circle"
+              prepend-icon="mdi-google-maps"
               title="Google Map"
+              value="Google Map"
+              to="/g-map"
             ></v-list-item>
             <v-list-item
-              prepend-icon="mdi-account-circle"
+              prepend-icon="mdi-contacts"
               title="Kontak"
+              to="/kontak"
+              value="Kontak"
             ></v-list-item>
             <v-list-item
-              prepend-icon="mdi-account-circle"
+              prepend-icon="mdi-information-outline"
               title="Disclaimer"
+              to="/disclaimer"
+              value="Disclaimer"
             ></v-list-item>
             <v-list-item
-              prepend-icon="mdi-account-circle"
+              prepend-icon="mdi-instagram"
               title="Link Media Social"
+              to="/social-media"
+              value="Link Media Social"
             ></v-list-item>
           </v-list-group>
-        </v-list>
+        </v-list> -->
         <!-- <v-list v-model:opened="open">
           <v-list-item
             prepend-icon="mdi-domain"
@@ -103,9 +117,7 @@
   background-color: var(--woodsmkoke);
   color: white;
 }
-.v-layout {
-  height: 100% !important;
-}
+
 .v-list-item-title {
   font-size: 13px !important;
 }
