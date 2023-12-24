@@ -30,7 +30,8 @@
       class="mt-5"
       :headers="headers"
       :thead-class="'thead-custom'"
-      :items="desserts"
+      :items="postDatas"
+      :search="searchText"
       :items-per-page="'7'"
       :sort-by="[{ key: 'calories', order: 'asc' }]"
     >
@@ -59,7 +60,6 @@
         </v-toolbar>
       </template>
       <template v-slot:item.actions="{ item }">
-        template v-slot:item.actions="{ item }">
         <v-icon size="small" class="me-2" @click="editItem(item)">
           mdi-eye-outline
         </v-icon>
@@ -72,7 +72,7 @@
         <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
       </template>
       <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize"> Reset </v-btn>
+        <v-btn color="primary"> Reset </v-btn>
       </template>
     </v-data-table>
   </div>
@@ -83,25 +83,28 @@
   display: none !important;
 }
 </style>
-<script>
+<script lang="ts">
 import router from "@/router";
-
+import { Ref, ref, onMounted } from "vue";
+import { IBerita, Berita } from "@/models/berita";
+import { postService, PostService } from "@/services/post-service";
+import { useToast } from "vue-toastification";
 export default {
   data: () => ({
     searchText: "",
     dialog: false,
     dialogDelete: false,
+    deleteId: null,
     headers: [
       {
-        title: "Dessert (100g serving)",
+        title: "ID",
         align: "start",
         sortable: false,
-        key: "name",
+        key: "id",
       },
-      { title: "Calories", key: "calories" },
-      { title: "Fat (g)", key: "fat" },
-      { title: "Carbs (g)", key: "carbs" },
-      { title: "Protein (g)", key: "protein" },
+      { title: "Judul", key: "title" },
+      { title: "Status", key: "status" },
+      // { title: "Tanggal di Posting", key: "createdAt" },
       { title: "Actions", key: "actions", sortable: false },
     ],
     desserts: [],
@@ -138,104 +141,42 @@ export default {
     },
   },
 
-  created() {
-    this.initialize();
-  },
+  created() {},
 
   methods: {
     toAddBerita() {
       router.push({ name: "TambahBerita" });
     },
-    initialize() {
-      this.desserts = [
-        {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-        },
-        {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-        },
-        {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-        },
-        {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-        },
-        {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-        },
-      ];
+
+    editItem(item: IBerita) {
+      router.push({ name: "UbahBerita", params: { id: item.id } });
     },
 
-    editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-    },
-
-    deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+    deleteItem(item: IBerita) {
+      this.deleteId = item.id;
       this.dialogDelete = true;
     },
 
-    deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
-      this.closeDelete();
+    async deleteItemConfirm() {
+      const res = await postService.delete(parseInt(this.deleteId));
+      if (res.data) {
+        this.toast.success("Berita Telah Di Hapus", {
+          position: "top-right",
+          timeout: 5000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          draggablePercent: 0.6,
+          showCloseButtonOnHover: false,
+          hideProgressBar: true,
+          closeButton: "button",
+          icon: true,
+          rtl: false,
+        });
+        this.closeDelete();
+        this.retrieveDataPosts();
+      }
     },
 
     close() {
@@ -248,10 +189,6 @@ export default {
 
     closeDelete() {
       this.dialogDelete = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
     },
 
     save() {
@@ -262,6 +199,31 @@ export default {
       }
       this.close();
     },
+  },
+  setup() {
+    const isFetching = ref(false);
+    let postDatas: Ref<IBerita[]> = ref([]);
+    const toast = useToast();
+
+    const retrieveDataPosts = async () => {
+      try {
+        isFetching.value = true;
+        const res = await postService.retrieve();
+        console.log("ress", res);
+        postDatas.value = res.data.data;
+        console.log("post ", postDatas);
+      } catch (error) {
+        console.log("error", error);
+        isFetching.value = false;
+      } finally {
+        isFetching.value = false;
+      }
+    };
+
+    onMounted(() => {
+      retrieveDataPosts();
+    });
+    return { postDatas, toast, retrieveDataPosts };
   },
 };
 </script>

@@ -2,12 +2,12 @@
   <form>
     <v-text-field
       class="mb-3"
-      v-model="state.title"
-      :error-messages="v$.title.$errors.map((e) => e.$message)"
-      label="Judul"
+      v-model="state.caption"
+      :error-messages="v$.caption.$errors.map((e) => e.$message)"
+      label="Caption"
       required
-      @input="v$.title.$touch"
-      @blur="v$.title.$touch"
+      @input="v$.caption.$touch"
+      @blur="v$.caption.$touch"
     ></v-text-field>
 
     <v-file-input
@@ -25,37 +25,33 @@
       "
     ></v-file-input>
 
-    <h4 class="text-h5 font-weight-medium">Preview</h4>
-    <v-img
-      style="border: 1px dashed #ccc"
-      :src="state.image"
-      alt="Image Preview"
-      max-width="100%"
-      min-height="200px"
-      max-height="200px"
-      margin-top="20px"
-    ></v-img>
-    <v-btn @click="clearPreview" class="my-4 bg-wood color-sunglow"
-      >Clear</v-btn
-    >
-    <ckeditor
-      :error-messages="v$.content.$errors.map((e) => e.$message)"
-      :config="editorConfig"
-      @input="checkValidasi"
-      @blur="checkValidasi"
-      :editor="editor"
-      v-model="state.content"
-    ></ckeditor>
+    <div class="mb-5">
+      <h4 class="text-h5 font-weight-medium">Preview</h4>
+      <v-img
+        style="border: 1px dashed #ccc"
+        :src="state.image"
+        alt="Image Preview"
+        max-width="100%"
+        min-height="200px"
+        max-height="200px"
+        margin-top="20px"
+      ></v-img>
+      <v-btn
+        @click="clearPreview"
+        class="my-4 bg-wood color-sunglow ml-auto d-flex"
+        >Clear</v-btn
+      >
+    </div>
 
     <v-btn
       class="mt-5"
       :class="
-        !state.title || !state.image || !state.content
+        !state.caption || !state.image
           ? 'bg-silver color-wood'
           : ' bg-wood color-sunglow'
       "
       @click="save"
-      :disabled="!state.title || !state.image || !state.content"
+      :disabled="!state.caption || !state.image"
     >
       submit
     </v-btn>
@@ -78,14 +74,20 @@
   }
 }
 </style>
-<script>
+<script lang="ts">
 import { reactive } from "vue";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required, requiredIf } from "@vuelidate/validators";
-import { Berita } from "@/models/berita";
+import { Galeri, IGaleri } from "@/models/galeri";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useToast } from "vue-toastification";
-import { ref } from "vue";
+import { ref, Ref, onMounted } from "vue";
+import { Attachment, IAttachment } from "@/models/attachment";
+import { useRoute } from "vue-router";
+import { galeriService } from "@/services/galeri-service";
+import { attachmentService } from "@/services/attachment-service";
+import router from "@/router";
+
 export default {
   data() {
     return {
@@ -98,7 +100,7 @@ export default {
     };
   },
   methods: {
-    previewFile() {
+    previewFile(e) {
       if (this.selectedFiles.length === 0) {
         this.state.image = null;
         return;
@@ -108,7 +110,7 @@ export default {
       reader.onload = (e) => {
         this.state.image = e.target.result;
       };
-
+      this.file = e.target.files[0];
       reader.readAsDataURL(this.selectedFiles[0]);
     },
     clearPreview() {
@@ -117,7 +119,12 @@ export default {
     },
   },
   setup() {
-    const initialState = new Berita();
+    const initialState = new Galeri();
+    const toast = useToast();
+    const file = ref();
+    const isFetching = ref(false);
+    const route = useRoute();
+    const attachment: Ref<IAttachment> = ref(new Attachment());
     let isValid = ref(false);
 
     const state = reactive({
@@ -125,23 +132,13 @@ export default {
     });
 
     const rules = {
-      title: { required },
+      caption: { required },
       content: { required },
       image: {
         required: requiredIf(function (nestedModel) {
           return nestedModel == null;
         }),
       },
-      items: { required },
-      checkbox: { required },
-    };
-
-    const checkValidasi = () => {
-      if (state.content.length > 0) {
-        isValid = true;
-      } else {
-        isValid = false;
-      }
     };
 
     const v$ = useVuelidate(rules, state);
@@ -153,30 +150,115 @@ export default {
         state[key] = value;
       }
     }
-    const toast = useToast();
-    const save = () => {
-      toast.success("News Has Been Created", {
-        position: "top-right",
-        timeout: 5000,
-        closeOnClick: true,
-        pauseOnFocusLoss: true,
-        pauseOnHover: true,
-        draggable: true,
-        draggablePercent: 0.6,
-        showCloseButtonOnHover: false,
-        hideProgressBar: true,
-        closeButton: "button",
-        icon: true,
-        rtl: false,
-      });
+    const retrieveDataGaleri = async (post: number) => {
+      try {
+        isFetching.value = true;
+        const res = await galeriService.find(post.id);
+        console.log("ress", res);
+        state.id = res.id;
+        state.caption = res.caption;
+        state.image = res.url;
+        attachment.value = res.attachment;
+        console.log("statee", res);
+      } catch (error) {
+        console.log("error", error);
+        isFetching.value = false;
+      } finally {
+        isFetching.value = false;
+      }
     };
+    onMounted(() => {
+      console.log("route", route.params);
+
+      if (Object.keys(route.params).length > 0) {
+        retrieveDataGaleri(route.params);
+      }
+    });
+    const save = async (id: number) => {
+      let galeri: IGaleri = {
+        id: state.id,
+        caption: state.caption,
+      };
+
+      let formData = new FormData();
+      formData.append("caption", galeri.caption);
+      if (file.value) {
+        formData.append("galleries", file.value);
+      }
+      console.log("form fata", formData);
+      if (galeri.id) {
+        isFetching.value = true;
+
+        const res = await galeriService.partialUpdate(formData, galeri.id);
+        if (res) {
+          toast.success("Galeri Telah Di Perbarui", {
+            position: "top-right",
+            timeout: 5000,
+            closeOnClick: true,
+            pauseOnFocusLoss: true,
+            pauseOnHover: true,
+            draggable: true,
+            draggablePercent: 0.6,
+            showCloseButtonOnHover: false,
+            hideProgressBar: true,
+            closeButton: "button",
+            icon: true,
+            rtl: false,
+          });
+        }
+        router.replace({ path: "/galeri" });
+      } else {
+        isFetching.value = true;
+        const res = await galeriService.create(formData);
+        if (res) {
+          toast.success("Galeri Berhasil Di Buat", {
+            position: "top-right",
+            timeout: 5000,
+            closeOnClick: true,
+            pauseOnFocusLoss: true,
+            pauseOnHover: true,
+            draggable: true,
+            draggablePercent: 0.6,
+            showCloseButtonOnHover: false,
+            hideProgressBar: true,
+            closeButton: "button",
+            icon: true,
+            rtl: false,
+          });
+        }
+        router.replace({ path: "/galeri" });
+      }
+    };
+
+    const saveImage = async () => {
+      if (file.value) {
+        let formData = new FormData();
+        formData.append("attachment", file.value);
+        if (attachment.value.id) {
+          const res = await attachmentService.partialUpdate(formData);
+          if (res) {
+            save(res.data.id);
+          }
+        } else {
+          const res = await attachmentService.create(formData);
+          if (res) {
+            console.log("res", res);
+            save(res.data.id);
+          }
+        }
+      } else {
+        save(attachment.value.id);
+      }
+    };
+
     return {
       state,
       v$,
       clear,
       isValid,
-      checkValidasi,
       save,
+      file,
+      saveImage,
     };
   },
 };

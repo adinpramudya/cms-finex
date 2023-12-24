@@ -8,6 +8,7 @@
         label="Username"
         bg-color="#ffffff"
         color="#000"
+        v-model="username"
         prepend-inner-icon="mdi-account"
       ></v-text-field>
       <v-text-field
@@ -15,6 +16,7 @@
         type="password"
         bg-color="#ffffff"
         color="#000"
+        v-model="password"
         prepend-inner-icon="mdi-account-key"
       ></v-text-field>
 
@@ -42,8 +44,25 @@
 
 <script setup>
 import router from "@/router";
+import { useAppStore } from "@/store/app";
+import { ref, onMounted } from "vue";
+
+const username = ref();
+const password = ref();
+const app = useAppStore();
+onMounted(() => {
+  // const token =
+  console.log("tokenn", app.isTokenExpired);
+});
 
 const login = () => {
-  router.push("/");
+  if (username.value && password.value) {
+    let body = {
+      username: username.value,
+      password: password.value,
+    };
+    app.login(body);
+    app.isTokenExpired();
+  }
 };
 </script>

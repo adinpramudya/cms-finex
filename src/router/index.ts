@@ -42,8 +42,18 @@ const routes = [
     component: () => import("@/views/Produk/AddChangeProduk.vue"),
   },
   {
+    path: "/produk/:id/tambah-produk",
+    name: "UbahProduk",
+    component: () => import("@/views/Produk/AddChangeProduk.vue"),
+  },
+  {
     path: "/galeri/tambah-galeri",
     name: "TambahGaleri",
+    component: () => import("@/views/Galeri/AddChangeGaleri.vue"),
+  },
+  {
+    path: "/galeri/:id/ubah-galeri",
+    name: "UbahGaleri",
     component: () => import("@/views/Galeri/AddChangeGaleri.vue"),
   },
 ];

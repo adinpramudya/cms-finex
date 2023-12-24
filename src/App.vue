@@ -31,16 +31,17 @@ import Navbar from "./components/Navbar.vue";
 import SideBar from "./components/SideBar.vue";
 
 import { ref, onMounted, watch } from "vue";
+import { useAppStore } from "./store/app";
 
 const currentRoute = ref(useRoute());
 const isShow = ref(true);
 const router = useRouter();
+const app = useAppStore();
 onMounted(() => {
+  app.autoLogout;
   const unwatch = router.beforeEach((to, from, next) => {
-    // Update the current route
     currentRoute.value = to;
 
-    // Continue with the navigation
     next();
   });
 

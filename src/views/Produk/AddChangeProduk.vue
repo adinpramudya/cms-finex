@@ -2,23 +2,22 @@
   <form>
     <v-text-field
       class="mb-3"
-      v-model="state.title"
-      :error-messages="v$.title.$errors.map((e) => e.$message)"
+      v-model="state.name"
+      :error-messages="v$.name.$errors.map((e) => e.$message)"
       label="Nama"
       required
-      @input="v$.title.$touch"
-      @blur="v$.title.$touch"
+      @input="v$.name.$touch"
+      @blur="v$.name.$touch"
     ></v-text-field>
 
-    <ckeditor
-      :error-messages="v$.content.$errors.map((e) => e.$message)"
-      :config="editorConfig"
-      @input="checkValidasi"
-      @blur="checkValidasi"
-      :editor="editor"
-      v-model="state.content"
-    ></ckeditor>
-
+    <v-textarea
+      :error-messages="v$.desc.$errors.map((e) => e.$message)"
+      @input="v$.desc.$touch"
+      @blur="v$.desc.$touch"
+      required
+      v-model="state.desc"
+      label="Description"
+    ></v-textarea>
     <v-file-input
       v-model="selectedFiles"
       label="Select an image"
@@ -35,134 +34,118 @@
       multiple
     ></v-file-input>
 
-    <h4 class="text-h5 font-weight-medium">Preview</h4>
-    <v-img
-      style="border: 1px dashed #ccc"
-      :src="state.image"
-      alt="Image Preview"
-      max-width="100%"
-      min-height="200px"
-      max-height="200px"
-      margin-top="20px"
-    ></v-img>
-    <v-btn @click="clearPreview" class="my-4 bg-wood color-sunglow"
-      >Clear</v-btn
-    >
+    <h4 class="text-h5 font-weight-medium mt-4">Preview</h4>
+    <div class="mb-5">
+      <v-img
+        style="border: 1px dashed #ccc"
+        :src="state.image"
+        alt="Image Preview"
+        max-width="100%"
+        min-height="200px"
+        max-height="200px"
+        margin-top="20px"
+      ></v-img>
+      <v-btn @click="clearPreview" class="my-4 bg-wood color-sunglow"
+        >Clear</v-btn
+      >
+    </div>
 
-    <v-text-field
-      class="mb-3"
-      v-model="state.title"
-      :error-messages="v$.title.$errors.map((e) => e.$message)"
-      label="Kode"
-      required
-      @input="v$.title.$touch"
-      @blur="v$.title.$touch"
-    ></v-text-field>
+    <v-tabs v-model="currentTabIndex" bg-color="red-lighten-2">
+      <v-tab v-for="(n, index) in futureContracts" :key="n.id" :value="index">
+        {{ n.codeUnix }}
+      </v-tab>
+    </v-tabs>
+    <v-card-text class="text-center">
+      <v-window v-model="currentTabIndex">
+        <v-window-item
+          v-for="(future, index) in futureContracts"
+          :key="future.id"
+          :value="future.codeUnix"
+        >
+          <v-text-field
+            class="mb-3"
+            v-model="future.code"
+            label="Kode"
+            required
+          ></v-text-field>
 
-    <v-text-field
-      class="mb-3"
-      v-model="state.title"
-      :error-messages="v$.title.$errors.map((e) => e.$message)"
-      label="Satuan Kontrak"
-      required
-      @input="v$.title.$touch"
-      @blur="v$.title.$touch"
-    ></v-text-field>
+          <v-text-field
+            class="mb-3"
+            v-model="future.contractUnit"
+            label="Satuan Kontrak"
+            required
+          ></v-text-field>
 
-    <v-row>
-      <v-col :cols="6"
-        ><v-text-field
-          class="mb-3"
-          v-model="state.title"
-          :error-messages="v$.title.$errors.map((e) => e.$message)"
-          label="Margin Per Lot"
-          required
-          @input="v$.title.$touch"
-          @blur="v$.title.$touch"
-        ></v-text-field
-      ></v-col>
-      <v-col :cols="6">
-        <v-radio-group v-model="radios">
-          <div class="d-flex">
-            <v-radio label="NONE" :value="null"></v-radio>
-            <v-radio label="REMOTE" value="REMOTE"></v-radio>
-            <v-radio label="SPOT" value="SPOT"></v-radio>
-          </div> </v-radio-group
-      ></v-col>
-    </v-row>
-    <v-row>
-      <v-col :cols="6"
-        ><v-text-field
-          class="mb-3"
-          v-model="state.title"
-          :error-messages="v$.title.$errors.map((e) => e.$message)"
-          label="Margin Per Lot"
-          required
-          @input="v$.title.$touch"
-          @blur="v$.title.$touch"
-        ></v-text-field
-      ></v-col>
-      <v-col :cols="6">
-        <v-radio-group v-model="radios">
-          <div class="d-flex">
-            <v-radio label="NONE" :value="null"></v-radio>
-            <v-radio label="REMOTE" value="REMOTE"></v-radio>
-            <v-radio label="SPOT" value="SPOT"></v-radio>
-          </div> </v-radio-group
-      ></v-col>
-    </v-row>
+          <v-text-field
+            class="mb-3"
+            v-model="future.marginPerLotNone"
+            label="Margin Per Lot (None)"
+          ></v-text-field>
+          <v-text-field
+            class="mb-3"
+            v-model="future.marginPerLotRemote"
+            label="Margin Per Lot (Remote)"
+          ></v-text-field>
+          <v-text-field
+            class="mb-3"
+            v-model="future.marginPerLotSpot"
+            label="Margin Per Lot (Spot)"
+          ></v-text-field>
 
-    <v-text-field
-      class="mb-3"
-      v-model="state.title"
-      :error-messages="v$.title.$errors.map((e) => e.$message)"
-      label="Komisi Per Lot Sisi"
-      required
-      @input="v$.title.$touch"
-      @blur="v$.title.$touch"
-    ></v-text-field>
-    <v-text-field
-      class="mb-3"
-      v-model="state.title"
-      :error-messages="v$.title.$errors.map((e) => e.$message)"
-      label="Hari dan Jam Perdagangan"
-      required
-      @input="v$.title.$touch"
-      @blur="v$.title.$touch"
-    ></v-text-field>
-    <v-text-field
-      class="mb-3"
-      v-model="state.title"
-      :error-messages="v$.title.$errors.map((e) => e.$message)"
-      label="Perubahan Harga Minimum"
-      required
-      @input="v$.title.$touch"
-      @blur="v$.title.$touch"
-    ></v-text-field>
+          <v-text-field
+            class="mb-3"
+            v-model="future.commissionPerSideLot"
+            label="Komisi Per Lot Sisi"
+            required
+          ></v-text-field>
+          <v-text-field
+            class="mb-3"
+            v-model="future.tradingDaysAndHours"
+            label="Hari dan Jam Perdagangan"
+            required
+          ></v-text-field>
+          <v-text-field
+            class="mb-3"
+            v-model="future.minimumPriceChange"
+            label="Perubahan Harga Minimum"
+            required
+          ></v-text-field>
 
-    <v-text-field
-      class="mb-3"
-      v-model="state.title"
-      :error-messages="v$.title.$errors.map((e) => e.$message)"
-      label="Harga"
-      required
-      @input="v$.title.$touch"
-      @blur="v$.title.$touch"
-    ></v-text-field>
+          <v-text-field
+            class="mb-3"
+            v-model="future.price"
+            label="Harga"
+            required
+          ></v-text-field>
 
-    <v-text-field
-      class="mb-3"
-      v-model="state.title"
-      :error-messages="v$.title.$errors.map((e) => e.$message)"
-      label="Bulan Kontrak"
-      required
-      @input="v$.title.$touch"
-      @blur="v$.title.$touch"
-    ></v-text-field>
+          <v-text-field
+            class="mb-3"
+            v-model="future.contractMonth"
+            label="Bulan Kontrak"
+            required
+          ></v-text-field>
+        </v-window-item>
+      </v-window>
+      <v-btn
+        :disabled="futureContracts.length == 0"
+        variant="text"
+        @click="
+          () => {
+            futureContracts.splice(currentTabIndex, 1);
+          }
+        "
+      >
+        Remove Future Contract
+      </v-btn>
+      <v-divider class="mx-4" vertical></v-divider>
+      <v-btn variant="text" @click="AddFutureContract">
+        Add Future Contract
+      </v-btn>
+    </v-card-text>
 
     <v-btn
-      class="mt-5 bg-wood color-sunglow"
-      @click="save"
+      class="bg-wood color-sunglow"
+      @click="saveImage"
       :disabled="!state.title || !state.image || !state.content"
     >
       submit
@@ -184,16 +167,31 @@
   &.invalid {
     border: 1px solid red;
   }
+  .error {
+    color: red;
+  }
+
+  .success {
+    color: green;
+  }
 }
 </style>
-<script>
+<script lang="ts">
 import { reactive } from "vue";
 import { useVuelidate } from "@vuelidate/core";
-import { email, required, requiredIf } from "@vuelidate/validators";
+import { email, helpers, required, requiredIf } from "@vuelidate/validators";
 import { Berita } from "@/models/berita";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useToast } from "vue-toastification";
-import { ref } from "vue";
+import { ref, Ref, onMounted, watch } from "vue";
+import { IProduct, Product } from "@/models/product";
+import { FutureContract, IFutureContract } from "@/models/future-contract";
+import { productService } from "@/services/product-service";
+import { attachmentService } from "@/services/attachment-service";
+import { useRoute } from "vue-router";
+import { Attachment, IAttachment } from "@/models/attachment";
+import router from "@/router";
+
 export default {
   data() {
     return {
@@ -202,7 +200,7 @@ export default {
       editorConfig: {
         // The configuration of the editor.
       },
-      radios: null,
+      currentTabIndex: 0,
       selectedFiles: [],
     };
   },
@@ -217,7 +215,7 @@ export default {
       reader.onload = (e) => {
         this.state.image = e.target.result;
       };
-
+      this.file = e.target.files[0];
       reader.readAsDataURL(this.selectedFiles[0]);
     },
     clearPreview() {
@@ -226,66 +224,255 @@ export default {
     },
   },
   setup() {
-    const initialState = new Berita();
+    const initialState = new Product();
+    const initialStateFuture = new FutureContract();
+    const futureContracts = ref<IFutureContract[]>([]);
     let isValid = ref(false);
+    const route = useRoute();
+    const file = ref();
 
     const state = reactive({
       ...initialState,
     });
+    const stateFuture = reactive({
+      ...futureContracts,
+    });
 
     const rules = {
-      title: { required },
-      content: { required },
+      name: { required },
+      desc: { required },
       image: {
         required: requiredIf(function (nestedModel) {
           return nestedModel == null;
         }),
       },
-      items: { required },
-      checkbox: { required },
     };
-
-    const checkValidasi = () => {
-      if (state.content.length > 0) {
-        isValid = true;
-      } else {
-        isValid = false;
-      }
+    const rulesFuture = {
+      futureContracts: {
+        $each: helpers.forEach({
+          code: { required },
+          contractUnit: { required },
+          commissionPerSideLot: { required },
+          tradingDaysAndHours: { required },
+          minimumPriceChange: { required },
+          price: { required },
+          contractMonth: { required },
+        }),
+      },
     };
 
     const v$ = useVuelidate(rules, state);
+    // const vF$ = useVuelidate(validations, { futureContracts });
 
-    function clear() {
-      v$.value.$reset();
-
-      for (const [key, value] of Object.entries(initialState)) {
-        state[key] = value;
-      }
-    }
     const toast = useToast();
-    const save = () => {
-      toast.success("News Has Been Created", {
-        position: "top-right",
-        timeout: 5000,
-        closeOnClick: true,
-        pauseOnFocusLoss: true,
-        pauseOnHover: true,
-        draggable: true,
-        draggablePercent: 0.6,
-        showCloseButtonOnHover: false,
-        hideProgressBar: true,
-        closeButton: "button",
-        icon: true,
-        rtl: false,
-      });
+    const isFetching = ref(false);
+    const attachment: Ref<IAttachment> = ref(new Attachment());
+
+    const retrieveProduct = async (post: number) => {
+      try {
+        isFetching.value = true;
+        const res = await productService.find(post.id);
+        state.id = res.id;
+        state.name = res.name;
+        state.desc = res.desc;
+        state.image = res.attachment.url;
+
+        res.FuturesContract.forEach((val, index) => {
+          let futureContract: IFutureContract = new FutureContract();
+
+          futureContract.code = val.code;
+          futureContract.codeUnix = val.code;
+          futureContract.commissionPerSideLot = val.commissionPerSideLot;
+          futureContract.contractMonth = val.contractMonth;
+          futureContract.contractUnit = val.contractUnit;
+          futureContract.id = val.id;
+          futureContract.marginPerLotNone = val.marginPerLotNone;
+          futureContract.marginPerLotRemote = val.marginPerLotRemote;
+          futureContract.marginPerLotSpot = val.marginPerLotSpot;
+          futureContract.minimumPriceChange = val.minimumPriceChange;
+          futureContract.price = val.price;
+          futureContract.tradingDaysAndHours = val.tradingDaysAndHours;
+          futureContracts.value.push(futureContract);
+        });
+        console.log("ress", futureContracts);
+      } catch (error) {
+        console.log("error", error);
+        isFetching.value = false;
+      } finally {
+        isFetching.value = false;
+      }
     };
+
+    const AddFutureContract = () => {
+      let futureContract: IFutureContract = {
+        codeUnix: `NewFuture${futureContracts.value.length}`,
+      };
+      futureContracts.value.push(futureContract);
+    };
+
+    onMounted(() => {
+      if (Object.keys(route.params).length > 0) {
+        retrieveProduct(route.params);
+      }
+    });
+
+    const saveFuture = async (future: IFutureContract) => {
+      if (future.id) {
+        isFetching.value = true;
+        const res = await productService.partialUpdate(future, future.id);
+        if (res.data) {
+          toast.success("Product Telah Di Perbarui", {
+            position: "top-right",
+            timeout: 5000,
+            closeOnClick: true,
+            pauseOnFocusLoss: true,
+            pauseOnHover: true,
+            draggable: true,
+            draggablePercent: 0.6,
+            showCloseButtonOnHover: false,
+            hideProgressBar: true,
+            closeButton: "button",
+            icon: true,
+            rtl: false,
+          });
+        }
+      } else {
+        isFetching.value = true;
+        const res = await productService.create(future);
+        if (res.data) {
+          toast.success("Product Berhasil Di Buat", {
+            position: "top-right",
+            timeout: 5000,
+            closeOnClick: true,
+            pauseOnFocusLoss: true,
+            pauseOnHover: true,
+            draggable: true,
+            draggablePercent: 0.6,
+            showCloseButtonOnHover: false,
+            hideProgressBar: true,
+            closeButton: "button",
+            icon: true,
+            rtl: false,
+          });
+        }
+      }
+    };
+
+    const save = async (id: number) => {
+      let product: IProduct = {
+        id: state.id,
+        name: state.name,
+        desc: state.desc,
+        attachmentId: id,
+      };
+      if (product.id) {
+        isFetching.value = true;
+        const res = await productService.partialUpdate(product, product.id);
+        if (res.data) {
+          futureContracts.value.forEach((val) => {
+            let future: IFutureContract = {
+              code: val.code,
+              codeUnix: val.code,
+              commissionPerSideLot: val.commissionPerSideLot,
+              contractMonth: val.contractMonth,
+              contractUnit: val.contractUnit,
+              id: val.id,
+              marginPerLotNone: val.marginPerLotNone,
+              marginPerLotRemote: val.marginPerLotRemote,
+              marginPerLotSpot: val.marginPerLotSpot,
+              minimumPriceChange: val.minimumPriceChange,
+              price: val.price,
+              tradingDaysAndHours: val.tradingDaysAndHours,
+              productId: res.data.id,
+            };
+            saveFuture(future);
+          });
+          // toast.success("Product Telah Di Perbarui", {
+          //   position: "top-right",
+          //   timeout: 5000,
+          //   closeOnClick: true,
+          //   pauseOnFocusLoss: true,
+          //   pauseOnHover: true,
+          //   draggable: true,
+          //   draggablePercent: 0.6,
+          //   showCloseButtonOnHover: false,
+          //   hideProgressBar: true,
+          //   closeButton: "button",
+          //   icon: true,
+          //   rtl: false,
+          // });
+        }
+      } else {
+        isFetching.value = true;
+        const res = await productService.create(product);
+        if (res.data) {
+          futureContracts.value.forEach((val) => {
+            let future: IFutureContract = {
+              code: val.code,
+              codeUnix: val.code,
+              commissionPerSideLot: val.commissionPerSideLot,
+              contractMonth: val.contractMonth,
+              contractUnit: val.contractUnit,
+              id: val.id,
+              marginPerLotNone: val.marginPerLotNone,
+              marginPerLotRemote: val.marginPerLotRemote,
+              marginPerLotSpot: val.marginPerLotSpot,
+              minimumPriceChange: val.minimumPriceChange,
+              price: val.price,
+              tradingDaysAndHours: val.tradingDaysAndHours,
+              productId: res.data.id,
+            };
+            saveFuture(future);
+          });
+          // toast.success("Product Berhasil Di Buat", {
+          //   position: "top-right",
+          //   timeout: 5000,
+          //   closeOnClick: true,
+          //   pauseOnFocusLoss: true,
+          //   pauseOnHover: true,
+          //   draggable: true,
+          //   draggablePercent: 0.6,
+          //   showCloseButtonOnHover: false,
+          //   hideProgressBar: true,
+          //   closeButton: "button",
+          //   icon: true,
+          //   rtl: false,
+          // });
+        }
+      }
+    };
+
+    const saveImage = async () => {
+      if (file.value) {
+        let formData = new FormData();
+        formData.append("attachment", file.value);
+        if (attachment.value.id) {
+          const res = await attachmentService.partialUpdate(formData);
+          if (res) {
+            save(res.data.id);
+          }
+        } else {
+          const res = await attachmentService.create(formData);
+          if (res) {
+            console.log("res", res);
+            save(res.data.id);
+          }
+        }
+      } else {
+        save(attachment.value.id);
+      }
+    };
+
     return {
       state,
       v$,
-      clear,
+      stateFuture,
       isValid,
-      checkValidasi,
       save,
+      AddFutureContract,
+      futureContracts,
+      file,
+      saveImage,
     };
   },
 };

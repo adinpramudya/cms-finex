@@ -30,7 +30,7 @@
       class="mt-5"
       :headers="headers"
       :thead-class="'thead-custom'"
-      :items="desserts"
+      :items="products"
       :items-per-page="'7'"
       :sort-by="[{ key: 'calories', order: 'asc' }]"
     >
@@ -82,9 +82,13 @@
   display: none !important;
 }
 </style>
-<script>
+<script lang="ts">
 import router from "@/router";
-
+import { Ref, ref, onMounted } from "vue";
+// import { IProduct, Product } from "@/models/product";
+import { useToast } from "vue-toastification";
+import { productService } from "@/services/product-service";
+import { IProduct } from "@/models/product";
 export default {
   data: () => ({
     searchText: "",
@@ -92,15 +96,12 @@ export default {
     dialogDelete: false,
     headers: [
       {
-        title: "Dessert (100g serving)",
+        title: "ID",
         align: "start",
         sortable: false,
-        key: "name",
+        key: "id",
       },
-      { title: "Calories", key: "calories" },
-      { title: "Fat (g)", key: "fat" },
-      { title: "Carbs (g)", key: "carbs" },
-      { title: "Protein (g)", key: "protein" },
+      { title: "Nama", key: "name" },
       { title: "Actions", key: "actions", sortable: false },
     ],
     desserts: [],
@@ -137,93 +138,13 @@ export default {
     },
   },
 
-  created() {
-    this.initialize();
-  },
-
   methods: {
     toAddProduk() {
       router.push({ name: "TambahProduk" });
     },
-    initialize() {
-      this.desserts = [
-        {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-        },
-        {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-        },
-        {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-        },
-        {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-        },
-        {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-        },
-      ];
-    },
 
-    editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
+    editItem(item: IProduct) {
+      router.push({ name: "UbahProduk", params: { id: item.id } });
     },
 
     deleteItem(item) {
@@ -261,6 +182,30 @@ export default {
       }
       this.close();
     },
+  },
+  setup() {
+    const isFetching = ref(false);
+    let products: Ref<IProduct[]> = ref([]);
+    const toast = useToast();
+
+    const retrieveDataProducts = async () => {
+      try {
+        isFetching.value = true;
+        const res = await productService.retrieve();
+        console.log("ress", res);
+        products.value = res.data.data;
+      } catch (error) {
+        console.log("error", error);
+        isFetching.value = false;
+      } finally {
+        isFetching.value = false;
+      }
+    };
+
+    onMounted(() => {
+      retrieveDataProducts();
+    });
+    return { products };
   },
 };
 </script>
