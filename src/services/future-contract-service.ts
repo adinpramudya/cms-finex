@@ -53,7 +53,7 @@ export class FutureService {
     });
   }
 
-  create(entity: IFutureContract): Promise<IFutureContract> {
+  create(entity: IFutureContract): Promise<any> {
     delete entity.codeUnix;
     return new Promise<any>((resolve, reject) => {
       axios
@@ -84,7 +84,7 @@ export class FutureService {
     });
   }
 
-  partialUpdate(entity: any, id: number): Promise<IFutureContract> {
+  partialUpdate(entity: any, id: number): Promise<any> {
     delete entity.id;
     delete entity.codeUnix;
     return new Promise<any>((resolve, reject) => {

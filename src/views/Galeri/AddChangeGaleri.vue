@@ -3,7 +3,7 @@
     <v-text-field
       class="mb-3"
       v-model="state.caption"
-      :error-messages="v$.caption.$errors.map((e) => e.$message)"
+      :rules="fieldRules"
       label="Caption"
       required
       @input="v$.caption.$touch"
@@ -16,7 +16,7 @@
       @input="v$.image.$touch"
       @blur="v$.image.$touch"
       @change="previewFile"
-      :error-messages="v$.image.$errors.map((e) => e.$message)"
+      :rules="fieldRulesImages"
       accept="image/*"
       :clearable="false"
       :prepend-icon="null"
@@ -80,7 +80,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { email, required, requiredIf } from "@vuelidate/validators";
 import { Galeri, IGaleri } from "@/models/galeri";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { useToast } from "vue-toastification";
+import { POSITION, useToast } from "vue-toastification";
 import { ref, Ref, onMounted } from "vue";
 import { Attachment, IAttachment } from "@/models/attachment";
 import { useRoute } from "vue-router";
@@ -97,6 +97,22 @@ export default {
         // The configuration of the editor.
       },
       selectedFiles: [],
+      fieldRules: [
+        (value: any) => {
+          if (value?.length > 0) return true;
+
+          return "Value is required";
+        },
+      ],
+      fieldRulesImages: [
+        (value: any) => {
+          console.log("value", value);
+
+          if (value.length > 0) return true;
+
+          return "Value is required";
+        },
+      ],
     };
   },
   methods: {
@@ -127,7 +143,7 @@ export default {
     const attachment: Ref<IAttachment> = ref(new Attachment());
     let isValid = ref(false);
 
-    const state = reactive({
+    const state: any = reactive({
       ...initialState,
     });
 
@@ -135,8 +151,9 @@ export default {
       caption: { required },
       content: { required },
       image: {
-        required: requiredIf(function (nestedModel) {
-          return nestedModel == null;
+        required: requiredIf(() => {
+          // Adjust the logic inside the function as needed
+          return true; // or any boolean condition based on your requirements
         }),
       },
     };
@@ -150,7 +167,7 @@ export default {
         state[key] = value;
       }
     }
-    const retrieveDataGaleri = async (post: number) => {
+    const retrieveDataGaleri = async (post: any) => {
       try {
         isFetching.value = true;
         const res = await galeriService.find(post.id);
@@ -192,7 +209,7 @@ export default {
         const res = await galeriService.partialUpdate(formData, galeri.id);
         if (res) {
           toast.success("Galeri Telah Di Perbarui", {
-            position: "top-right",
+            position: "top-right" as POSITION,
             timeout: 5000,
             closeOnClick: true,
             pauseOnFocusLoss: true,
@@ -212,7 +229,7 @@ export default {
         const res = await galeriService.create(formData);
         if (res) {
           toast.success("Galeri Berhasil Di Buat", {
-            position: "top-right",
+            position: "top-right" as POSITION,
             timeout: 5000,
             closeOnClick: true,
             pauseOnFocusLoss: true,

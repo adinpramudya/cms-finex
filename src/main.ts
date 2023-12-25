@@ -12,7 +12,6 @@ import Vuelidate from "@vuelidate/core";
 // import "@vuelidate/core/dist/all.css";
 // import VueEditor from "vue2-editor";
 import CKEditor from "@ckeditor/ckeditor5-vue";
-import VueCookie from "vue-cookie";
 // Components
 import App from "./App.vue";
 

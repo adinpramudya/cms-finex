@@ -3,7 +3,7 @@ import axios from "axios";
 const baseApiUrl = "https://api.finexkomoditi.id/v1/products";
 
 export class ProductService {
-  find(id: number): Promise<IProduct> {
+  find(id: number): Promise<any> {
     return new Promise<IProduct>((resolve, reject) => {
       axios
         .get(`${baseApiUrl}/${id}`, {
@@ -61,8 +61,8 @@ export class ProductService {
     });
   }
 
-  create(entity: IProduct): Promise<IProduct> {
-    return new Promise<IProduct>((resolve, reject) => {
+  create(entity: IProduct): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
       axios
         .post(`${baseApiUrl}`, entity, {
           headers: {
@@ -91,7 +91,7 @@ export class ProductService {
     });
   }
 
-  partialUpdate(entity: IProduct, id: number): Promise<IProduct> {
+  partialUpdate(entity: IProduct, id: number): Promise<any> {
     delete entity.id;
     return new Promise<IProduct>((resolve, reject) => {
       axios

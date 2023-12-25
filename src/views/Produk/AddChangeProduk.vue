@@ -3,7 +3,7 @@
     <v-text-field
       class="mb-3"
       v-model="state.name"
-      :error-messages="v$.name.$errors.map((e) => e.$message)"
+      :rules="fieldRules"
       label="Nama"
       required
       @input="v$.name.$touch"
@@ -11,7 +11,7 @@
     ></v-text-field>
 
     <v-textarea
-      :error-messages="v$.desc.$errors.map((e) => e.$message)"
+      :rules="fieldRules"
       @input="v$.desc.$touch"
       @blur="v$.desc.$touch"
       required
@@ -24,7 +24,7 @@
       @input="v$.image.$touch"
       @blur="v$.image.$touch"
       @change="previewFile"
-      :error-messages="v$.image.$errors.map((e) => e.$message)"
+      :rules="fieldRulesImages"
       accept="image/*"
       :clearable="false"
       :prepend-icon="null"
@@ -196,7 +196,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { email, helpers, required, requiredIf } from "@vuelidate/validators";
 import { Berita } from "@/models/berita";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { useToast } from "vue-toastification";
+import { POSITION, useToast } from "vue-toastification";
 import { ref, Ref, onMounted, watch } from "vue";
 import { IProduct, Product } from "@/models/product";
 import { FutureContract, IFutureContract } from "@/models/future-contract";
@@ -220,6 +220,15 @@ export default {
       fieldRules: [
         (value: any) => {
           if (value?.length > 0) return true;
+
+          return "Value is required";
+        },
+      ],
+      fieldRulesImages: [
+        (value: any) => {
+          console.log("value", value);
+
+          if (value.length > 0) return true;
 
           return "Value is required";
         },
@@ -276,7 +285,7 @@ export default {
     const route = useRoute();
     const file = ref();
 
-    const state = reactive({
+    const state: any = reactive({
       ...initialState,
     });
     const stateFuture = reactive({
@@ -287,8 +296,9 @@ export default {
       name: { required },
       desc: { required },
       image: {
-        required: requiredIf(function (nestedModel) {
-          return nestedModel == null;
+        required: requiredIf(() => {
+          // Adjust the logic inside the function as needed
+          return true; // or any boolean condition based on your requirements
         }),
       },
     };
@@ -313,7 +323,7 @@ export default {
     const isFetching = ref(false);
     const attachment: Ref<IAttachment> = ref(new Attachment());
 
-    const retrieveProduct = async (post: number) => {
+    const retrieveProduct = async (post: any) => {
       try {
         isFetching.value = true;
         const res = await productService.find(post.id);
@@ -373,7 +383,7 @@ export default {
         const res = await futureService.partialUpdate(future, future.id);
         if (res.data) {
           toast.success("Product Telah Di Perbarui", {
-            position: "top-right",
+            position: "top-right" as POSITION,
             timeout: 5000,
             closeOnClick: true,
             pauseOnFocusLoss: true,
@@ -392,7 +402,7 @@ export default {
         const res = await futureService.create(future);
         if (res.data) {
           toast.success("Product Berhasil Di Buat", {
-            position: "top-right",
+            position: "top-right" as POSITION,
             timeout: 5000,
             closeOnClick: true,
             pauseOnFocusLoss: true,
@@ -423,7 +433,7 @@ export default {
         const res = await productService.partialUpdate(product, product.id);
         if (res.data) {
           futureContracts.value.forEach((val) => {
-            let future: IFutureContract = {
+            let future: any = {
               code: val.code,
               codeUnix: val.code,
               commissionPerSideLot: val.commissionPerSideLot,
@@ -443,7 +453,7 @@ export default {
           router.replace({ path: "/produk" });
         }
       } else {
-        let formData = new FormData();
+        let formData: any = new FormData();
         if (file.value) {
           formData.append("attachment", file.value);
           formData.append("name", state.name);
@@ -453,7 +463,7 @@ export default {
         const res = await productService.create(formData);
         if (res.data) {
           futureContracts.value.forEach((val) => {
-            let future: IFutureContract = {
+            let future: any = {
               code: val.code,
               codeUnix: val.code,
               commissionPerSideLot: val.commissionPerSideLot,

@@ -89,14 +89,46 @@ import { onMounted } from "vue";
 import { ref, Ref } from "vue";
 import { Contact, IContact } from "@/models/contact";
 import router from "@/router";
-import { useToast } from "vue-toastification";
+import { POSITION, useToast } from "vue-toastification";
 export default {
   data: () => ({
-    editor: ClassicEditor,
+    editor: ClassicEditor as any,
     editorData: "<p>Content of the editor.</p>",
     editorConfig: {
-      // The configuration of the editor.
-    },
+      toolbar: [
+        "heading",
+        "|",
+        "bold",
+        "italic",
+        "underline",
+        "strikethrough",
+        "|",
+        "fontColor",
+        "fontBackgroundColor",
+        "|",
+        "alignment",
+        "|",
+        "numberedList",
+        "bulletedList",
+        "|",
+        "outdent",
+        "indent",
+        "|",
+        "link",
+        "|",
+        "undo",
+        "redo",
+        "|",
+        "blockQuote",
+        "highlight",
+        "|",
+        "horizontalLine",
+        "removeFormat",
+        "|",
+        "specialCharacters",
+        "sourceEditing",
+      ],
+    } as any,
     content: "",
     tab: null,
   }),
@@ -131,7 +163,7 @@ export default {
         );
         if (res) {
           toast.success("Contact Telah Di Perbarui", {
-            position: "top-right",
+            position: "top-right" as POSITION,
             timeout: 5000,
             closeOnClick: true,
             pauseOnFocusLoss: true,
@@ -150,7 +182,7 @@ export default {
         const res = await contactService.create(contactData.value);
         if (res) {
           toast.success("Contact Berhasil Di Buat", {
-            position: "top-right",
+            position: "top-right" as POSITION,
             timeout: 5000,
             closeOnClick: true,
             pauseOnFocusLoss: true,

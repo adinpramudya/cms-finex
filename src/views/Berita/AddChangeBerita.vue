@@ -3,7 +3,7 @@
     <v-text-field
       class="mb-3"
       v-model="state.title"
-      :error-messages="v$.title.$errors.map((e) => e.$message)"
+      :rules="fieldRules"
       label="Judul"
       required
       @input="v$.title.$touch"
@@ -16,7 +16,7 @@
       @input="v$.image.$touch"
       @blur="v$.image.$touch"
       @change="previewFile"
-      :error-messages="v$.image.$errors.map((e) => e.$message)"
+      :rules="fieldRulesImages"
       accept="image/*"
       :clearable="false"
       :prepend-icon="null"
@@ -41,8 +41,6 @@
     <ckeditor
       :error-messages="v$.content.$errors.map((e) => e.$message)"
       :config="editorConfig"
-      @input="checkValidasi"
-      @blur="checkValidasi"
       :editor="editor"
       v-model="state.content"
     ></ckeditor>
@@ -82,20 +80,68 @@ import { email, required, requiredIf } from "@vuelidate/validators";
 import { Berita, IBerita } from "@/models/berita";
 import { Attachment, IAttachment } from "@/models/attachment";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { useToast } from "vue-toastification";
+import { POSITION, useToast } from "vue-toastification";
 import { ref, Ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import router from "@/router";
 export default {
   data() {
     return {
-      editor: ClassicEditor,
+      editor: ClassicEditor as any,
       editorData: "<p>Content of the editor.</p>",
       editorConfig: {
-        // The configuration of the editor.
-      },
+        toolbar: [
+          "heading",
+          "|",
+          "bold",
+          "italic",
+          "underline",
+          "strikethrough",
+          "|",
+          "fontColor",
+          "fontBackgroundColor",
+          "|",
+          "alignment",
+          "|",
+          "numberedList",
+          "bulletedList",
+          "|",
+          "outdent",
+          "indent",
+          "|",
+          "link",
+          "|",
+          "undo",
+          "redo",
+          "|",
+          "blockQuote",
+          "highlight",
+          "|",
+          "horizontalLine",
+          "removeFormat",
+          "|",
+          "specialCharacters",
+          "sourceEditing",
+        ],
+      } as any,
       selectedFiles: [],
       file: null,
+      fieldRules: [
+        (value: any) => {
+          if (value?.length > 0) return true;
+
+          return "Value is required";
+        },
+      ],
+      fieldRulesImages: [
+        (value: any) => {
+          console.log("value", value);
+
+          if (value.length > 0) return true;
+
+          return "Value is required";
+        },
+      ],
     };
   },
   methods: {
@@ -129,7 +175,7 @@ export default {
     const currentUser = ref();
     const attachment: Ref<IAttachment> = ref(new Attachment());
 
-    let state = reactive({
+    let state: any = reactive({
       ...initialState,
     });
 
@@ -137,20 +183,11 @@ export default {
       title: { required },
       content: { required },
       image: {
-        required: requiredIf(function (nestedModel) {
-          return nestedModel == null;
+        required: requiredIf(() => {
+          // Adjust the logic inside the function as needed
+          return true; // or any boolean condition based on your requirements
         }),
       },
-      items: { required },
-      checkbox: { required },
-    };
-
-    const checkValidasi = () => {
-      if (state.content.length > 0) {
-        isValid = true;
-      } else {
-        isValid = false;
-      }
     };
 
     const v$ = useVuelidate(rules, state);
@@ -163,7 +200,7 @@ export default {
       }
     }
 
-    const retrieveDataPosts = async (post: number) => {
+    const retrieveDataPosts = async (post: any) => {
       try {
         isFetching.value = true;
         const res = await postService.find(post.id);
@@ -208,7 +245,7 @@ export default {
         const res = await postService.partialUpdate(berita, berita.id);
         if (res) {
           toast.success("Berita Telah Di Perbarui", {
-            position: "top-right",
+            position: "top-right" as POSITION,
             timeout: 5000,
             closeOnClick: true,
             pauseOnFocusLoss: true,
@@ -228,7 +265,7 @@ export default {
         const res = await postService.create(berita);
         if (res) {
           toast.success("Berita Berhasil Di Buat", {
-            position: "top-right",
+            position: "top-right" as POSITION,
             timeout: 5000,
             closeOnClick: true,
             pauseOnFocusLoss: true,
@@ -275,7 +312,6 @@ export default {
       v$,
       clear,
       isValid,
-      checkValidasi,
       save,
       saveImage,
       file,

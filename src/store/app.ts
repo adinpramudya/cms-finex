@@ -13,7 +13,7 @@ export const useAppStore = defineStore("app", {
     error: null,
   }),
   actions: {
-    setToken(token) {
+    setToken(token: any) {
       this.token = token;
     },
     async login(body: any) {
@@ -51,7 +51,6 @@ export const useAppStore = defineStore("app", {
       const decodedToken = jwtDecode(token);
 
       localStorage.setItem("currentUser", JSON.stringify(decodedToken));
-      console.log("decode", decodedToken);
       this.isLoggedIn = true;
       const expirationTimestamp = decodedToken?.exp * 1000; // Convert seconds to milliseconds
 

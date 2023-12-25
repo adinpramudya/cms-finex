@@ -95,7 +95,7 @@ export class PostService {
     });
   }
 
-  partialUpdate(entity: IBerita, id: number): Promise<IBerita> {
+  partialUpdate(entity: IBerita, id: number): Promise<any> {
     delete entity.id;
     return new Promise<IBerita>((resolve, reject) => {
       axios

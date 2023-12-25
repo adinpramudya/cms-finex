@@ -15,7 +15,6 @@
     </div>
     <v-card-text>
       <v-text-field
-        :loading="loading"
         density="compact"
         variant="solo"
         label="Cari Produk"
@@ -23,7 +22,6 @@
         single-line
         hide-details
         v-model="searchText"
-        @click:append-inner="onClick"
       ></v-text-field>
     </v-card-text>
     <v-data-table
@@ -99,7 +97,7 @@ export default {
       },
       { title: "Nama", key: "name" },
       { title: "Actions", key: "actions", sortable: false },
-    ],
+    ] as any,
     desserts: [],
     editedIndex: -1,
     editedItem: {

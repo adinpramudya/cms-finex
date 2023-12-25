@@ -15,7 +15,6 @@
     </div>
     <v-card-text>
       <v-text-field
-        :loading="loading"
         density="compact"
         variant="solo"
         label="Cari Berita"
@@ -23,7 +22,6 @@
         single-line
         hide-details
         v-model="searchText"
-        @click:append-inner="onClick"
       ></v-text-field>
     </v-card-text>
     <v-data-table
@@ -33,7 +31,7 @@
       :items="postDatas"
       :search="searchText"
       :items-per-page="'7'"
-      :sort-by="[{ key: 'calories', order: 'asc' }]"
+      :sort-by="[{ key: 'id', order: 'asc' }]"
     >
       <template v-slot:top>
         <v-toolbar flat>
@@ -112,11 +110,10 @@ export default {
         sortable: false,
         key: "id",
       },
-      { title: "Judul", key: "title" },
-      { title: "Status", key: "status" },
-      // { title: "Tanggal di Posting", key: "createdAt" },
-      { title: "Actions", key: "actions", sortable: false },
-    ],
+      { title: "Judul", key: "title", align: "start", sortable: false },
+      { title: "Status", key: "status", align: "start", sortable: false },
+      { title: "Actions", key: "actions", sortable: false, align: "start" },
+    ] as any,
     desserts: [],
     editedIndex: -1,
     editedItem: {
