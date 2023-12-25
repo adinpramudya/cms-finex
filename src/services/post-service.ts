@@ -52,6 +52,18 @@ export class PostService {
         });
     });
   }
+  retrieveCount(): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      axios
+        .get(baseApiUrl)
+        .then((res) => {
+          resolve(res.data.data.length);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
 
   create(entity: IBerita): Promise<IBerita> {
     return new Promise<IBerita>((resolve, reject) => {

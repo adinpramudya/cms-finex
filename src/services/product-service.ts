@@ -6,7 +6,11 @@ export class ProductService {
   find(id: number): Promise<IProduct> {
     return new Promise<IProduct>((resolve, reject) => {
       axios
-        .get(`${baseApiUrl}/${id}`)
+        .get(`${baseApiUrl}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
         .then((res) => {
           resolve(res.data.data);
         })
@@ -27,11 +31,27 @@ export class ProductService {
         });
     });
   }
+  retrieveCount(): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      axios
+        .get(baseApiUrl)
+        .then((res) => {
+          resolve(res.data.data.length);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
 
   delete(id: number): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios
-        .delete(`${baseApiUrl}/${id}`)
+        .delete(`${baseApiUrl}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
         .then((res) => {
           resolve(res);
         })
@@ -75,7 +95,11 @@ export class ProductService {
     delete entity.id;
     return new Promise<IProduct>((resolve, reject) => {
       axios
-        .patch(`${baseApiUrl}/${id}`, entity)
+        .patch(`${baseApiUrl}/${id}`, entity, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
         .then((res) => {
           resolve(res.data);
         })

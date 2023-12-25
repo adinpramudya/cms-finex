@@ -61,19 +61,12 @@
       </template>
       <template v-slot:item.actions="{ item }">
         <v-icon size="small" class="me-2" @click="editItem(item)">
-          mdi-eye-outline
-        </v-icon>
-        <v-icon size="small" class="me-2 d-none" @click="editItem(item)">
-          mdi-eye-off-outline
-        </v-icon>
-
-        <v-icon size="small" class="me-2" @click="editItem(item)">
           mdi-pencil
         </v-icon>
         <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
       </template>
       <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize"> Reset </v-btn>
+        <v-btn color="primary" @click="retrieveGaleries"> Reset </v-btn>
       </template>
     </v-data-table>
   </div>

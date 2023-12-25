@@ -23,7 +23,7 @@
               <template v-slot:activator="{ props }">
                 <v-btn icon v-bind="props">
                   <v-avatar color="brown" size="large">
-                    <span class="text-h5">{{ user.initials }}</span>
+                    <span class="text-h5">AD</span>
                   </v-avatar>
                 </v-btn>
               </template>
@@ -31,17 +31,13 @@
                 <v-card-text>
                   <div class="mx-auto text-center">
                     <v-avatar color="brown">
-                      <span class="text-h5">{{ user.initials }}</span>
+                      <span class="text-h5">AD</span>
                     </v-avatar>
-                    <h3>{{ user.fullName }}</h3>
-                    <p class="text-caption mt-1">
-                      {{ user.email }}
-                    </p>
-                    <v-divider class="my-3"></v-divider>
-                    <v-btn rounded variant="text"> Edit Account </v-btn>
+                    <h3 class="mt-4">{{ currentUser.username }}</h3>
+
                     <v-divider class="my-3"></v-divider>
                     <v-btn rounded variant="text" @click="logout">
-                      Disconnect
+                      Logout
                     </v-btn>
                   </div>
                 </v-card-text>
@@ -112,19 +108,27 @@
 </style>
 <script>
 import router from "@/router";
+import { useAppStore } from "@/store/app";
+import { onMounted } from "vue";
+import { ref } from "vue";
 
 export default {
-  data: () => ({
-    user: {
-      initials: "JD",
-      fullName: "John Doe",
-      email: "john.doe@doe.com",
-    },
-  }),
+  data: () => ({}),
   methods: {
     logout() {
-      router.push("/login");
+      this.app.logout();
     },
+  },
+  setup() {
+    const currentUser = ref();
+    const app = useAppStore();
+    onMounted(() => {
+      const storedTokenString = localStorage.getItem("currentUser");
+      currentUser.value = storedTokenString
+        ? JSON.parse(storedTokenString)
+        : null;
+    });
+    return { currentUser, app };
   },
 };
 </script>

@@ -251,7 +251,10 @@ export default {
         let formData = new FormData();
         formData.append("attachment", file.value);
         if (attachment.value.id) {
-          const res = await attachmentService.partialUpdate(formData);
+          const res = await attachmentService.update(
+            formData,
+            attachment.value.id
+          );
           if (res) {
             save(res.data.id);
           }

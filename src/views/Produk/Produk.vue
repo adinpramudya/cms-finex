@@ -28,6 +28,7 @@
     </v-card-text>
     <v-data-table
       class="mt-5"
+      :search="searchText"
       :headers="headers"
       :thead-class="'thead-custom'"
       :items="products"
@@ -60,18 +61,12 @@
       </template>
       <template v-slot:item.actions="{ item }">
         <v-icon size="small" class="me-2" @click="editItem(item)">
-          mdi-eye-outline
-        </v-icon>
-        <v-icon size="small" class="me-2 d-none" @click="editItem(item)">
-          mdi-eye-off-outline
-        </v-icon>
-        <v-icon size="small" class="me-2" @click="editItem(item)">
           mdi-pencil
         </v-icon>
         <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
       </template>
       <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize"> Reset </v-btn>
+        <v-btn color="primary" @click="retrieveDataProducts"> Reset </v-btn>
       </template>
     </v-data-table>
   </div>
@@ -88,7 +83,8 @@ import { Ref, ref, onMounted } from "vue";
 // import { IProduct, Product } from "@/models/product";
 import { useToast } from "vue-toastification";
 import { productService } from "@/services/product-service";
-import { IProduct } from "@/models/product";
+import { futureService } from "@/services/future-contract-service";
+import { IProduct, Product } from "@/models/product";
 export default {
   data: () => ({
     searchText: "",
@@ -147,15 +143,35 @@ export default {
       router.push({ name: "UbahProduk", params: { id: item.id } });
     },
 
-    deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+    deleteItem(item: IProduct) {
+      this.product = item;
       this.dialogDelete = true;
     },
 
-    deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
-      this.closeDelete();
+    async deleteItemConfirm() {
+      for (const val of this.product.FuturesContract) {
+        const resFuture = await futureService.delete(parseInt(val.id));
+      }
+
+      const res = await productService.delete(parseInt(this.product.id));
+      if (res.data) {
+        this.toast.success("Produk Telah Di Hapus", {
+          position: "top-right",
+          timeout: 5000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          draggablePercent: 0.6,
+          showCloseButtonOnHover: false,
+          hideProgressBar: true,
+          closeButton: "button",
+          icon: true,
+          rtl: false,
+        });
+        this.retrieveDataProducts();
+        this.closeDelete();
+      }
     },
 
     close() {
@@ -187,6 +203,7 @@ export default {
     const isFetching = ref(false);
     let products: Ref<IProduct[]> = ref([]);
     const toast = useToast();
+    const product: Ref<IProduct> = ref(new Product());
 
     const retrieveDataProducts = async () => {
       try {
@@ -205,7 +222,7 @@ export default {
     onMounted(() => {
       retrieveDataProducts();
     });
-    return { products };
+    return { products, retrieveDataProducts, toast, product };
   },
 };
 </script>

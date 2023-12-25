@@ -60,10 +60,20 @@
         </v-toolbar>
       </template>
       <template v-slot:item.actions="{ item }">
-        <v-icon size="small" class="me-2" @click="editItem(item)">
+        <v-icon
+          size="small"
+          v-if="item.status == 'draft'"
+          class="me-2"
+          @click="editStatus(item, 'publish')"
+        >
           mdi-eye-outline
         </v-icon>
-        <v-icon size="small" class="me-2 d-none" @click="editItem(item)">
+        <v-icon
+          size="small"
+          v-if="item.status == 'publish'"
+          class="me-2"
+          @click="editStatus(item, 'draft')"
+        >
           mdi-eye-off-outline
         </v-icon>
         <v-icon size="small" class="me-2" @click="editItem(item)">
@@ -72,7 +82,7 @@
         <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
       </template>
       <template v-slot:no-data>
-        <v-btn color="primary"> Reset </v-btn>
+        <v-btn color="primary" @click="retrieveDataPosts"> Reset </v-btn>
       </template>
     </v-data-table>
   </div>
@@ -150,6 +160,31 @@ export default {
 
     editItem(item: IBerita) {
       router.push({ name: "UbahBerita", params: { id: item.id } });
+    },
+    async editStatus(item: IBerita, status: string) {
+      let berita: IBerita = {
+        status: status,
+        authorId: item.author.id,
+        attachmentId: item.attachment.id,
+      };
+      const res = await postService.partialUpdate(berita, item.id);
+      if (res.data) {
+        this.toast.success(`Status Berita ${status}`, {
+          position: "top-right",
+          timeout: 5000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          draggablePercent: 0.6,
+          showCloseButtonOnHover: false,
+          hideProgressBar: true,
+          closeButton: "button",
+          icon: true,
+          rtl: false,
+        });
+        this.retrieveDataPosts();
+      }
     },
 
     deleteItem(item: IBerita) {

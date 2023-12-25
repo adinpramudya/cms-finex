@@ -50,7 +50,7 @@
       >
     </div>
 
-    <v-tabs v-model="currentTabIndex" bg-color="red-lighten-2">
+    <v-tabs v-model="currentTabIndex" class="bg-wood" style="color: white">
       <v-tab v-for="(n, index) in futureContracts" :key="n.id" :value="index">
         {{ n.codeUnix }}
       </v-tab>
@@ -65,6 +65,7 @@
           <v-text-field
             class="mb-3"
             v-model="future.code"
+            :rules="fieldRules"
             label="Kode"
             required
           ></v-text-field>
@@ -73,20 +74,24 @@
             class="mb-3"
             v-model="future.contractUnit"
             label="Satuan Kontrak"
+            :rules="fieldRules"
             required
           ></v-text-field>
 
           <v-text-field
             class="mb-3"
             v-model="future.marginPerLotNone"
+            type="number"
             label="Margin Per Lot (None)"
           ></v-text-field>
           <v-text-field
             class="mb-3"
+            type="number"
             v-model="future.marginPerLotRemote"
             label="Margin Per Lot (Remote)"
           ></v-text-field>
           <v-text-field
+            type="number"
             class="mb-3"
             v-model="future.marginPerLotSpot"
             label="Margin Per Lot (Spot)"
@@ -94,26 +99,31 @@
 
           <v-text-field
             class="mb-3"
+            type="number"
             v-model="future.commissionPerSideLot"
             label="Komisi Per Lot Sisi"
+            :rules="fieldRules"
             required
           ></v-text-field>
           <v-text-field
             class="mb-3"
             v-model="future.tradingDaysAndHours"
             label="Hari dan Jam Perdagangan"
+            :rules="fieldRules"
             required
           ></v-text-field>
           <v-text-field
             class="mb-3"
             v-model="future.minimumPriceChange"
             label="Perubahan Harga Minimum"
+            :rules="fieldRules"
             required
           ></v-text-field>
 
           <v-text-field
             class="mb-3"
             v-model="future.price"
+            :rules="fieldRules"
             label="Harga"
             required
           ></v-text-field>
@@ -121,6 +131,7 @@
           <v-text-field
             class="mb-3"
             v-model="future.contractMonth"
+            :rules="fieldRules"
             label="Bulan Kontrak"
             required
           ></v-text-field>
@@ -146,7 +157,7 @@
     <v-btn
       class="bg-wood color-sunglow"
       @click="saveImage"
-      :disabled="!state.title || !state.image || !state.content"
+      :disabled="!validasiCheck"
     >
       submit
     </v-btn>
@@ -175,6 +186,9 @@
     color: green;
   }
 }
+.v-input__details {
+  text-align: left;
+}
 </style>
 <script lang="ts">
 import { reactive } from "vue";
@@ -187,6 +201,7 @@ import { ref, Ref, onMounted, watch } from "vue";
 import { IProduct, Product } from "@/models/product";
 import { FutureContract, IFutureContract } from "@/models/future-contract";
 import { productService } from "@/services/product-service";
+import { futureService } from "@/services/future-contract-service";
 import { attachmentService } from "@/services/attachment-service";
 import { useRoute } from "vue-router";
 import { Attachment, IAttachment } from "@/models/attachment";
@@ -202,10 +217,40 @@ export default {
       },
       currentTabIndex: 0,
       selectedFiles: [],
+      fieldRules: [
+        (value: any) => {
+          if (value?.length > 0) return true;
+
+          return "Value is required";
+        },
+      ],
+      isValid: false,
     };
   },
+  computed: {
+    validasiCheck() {
+      if (this.state.name && this.state.desc && this.state.image) {
+        return true;
+      }
+      return false;
+    },
+  },
+
   methods: {
-    previewFile() {
+    validasiFuture() {
+      this.isValid = this.futureContracts.some((val) => {
+        return (
+          val.code &&
+          val.commissionPerSideLot &&
+          val.contractMonth &&
+          val.contractUnit &&
+          val.minimumPriceChange &&
+          val.price &&
+          val.tradingDaysAndHours
+        );
+      });
+    },
+    previewFile(e) {
       if (this.selectedFiles.length === 0) {
         this.state.image = null;
         return;
@@ -276,24 +321,30 @@ export default {
         state.name = res.name;
         state.desc = res.desc;
         state.image = res.attachment.url;
+        attachment.value = res.attachment;
 
-        res.FuturesContract.forEach((val, index) => {
-          let futureContract: IFutureContract = new FutureContract();
+        if (res.FuturesContract.length > 0) {
+          res.FuturesContract.forEach((val, index) => {
+            let futureContract: IFutureContract = new FutureContract();
 
-          futureContract.code = val.code;
-          futureContract.codeUnix = val.code;
-          futureContract.commissionPerSideLot = val.commissionPerSideLot;
-          futureContract.contractMonth = val.contractMonth;
-          futureContract.contractUnit = val.contractUnit;
-          futureContract.id = val.id;
-          futureContract.marginPerLotNone = val.marginPerLotNone;
-          futureContract.marginPerLotRemote = val.marginPerLotRemote;
-          futureContract.marginPerLotSpot = val.marginPerLotSpot;
-          futureContract.minimumPriceChange = val.minimumPriceChange;
-          futureContract.price = val.price;
-          futureContract.tradingDaysAndHours = val.tradingDaysAndHours;
-          futureContracts.value.push(futureContract);
-        });
+            futureContract.code = val.code;
+            futureContract.codeUnix = val.code;
+            futureContract.commissionPerSideLot = val.commissionPerSideLot;
+            futureContract.contractMonth = val.contractMonth;
+            futureContract.contractUnit = val.contractUnit;
+            futureContract.id = val.id;
+            futureContract.marginPerLotNone = val.marginPerLotNone;
+            futureContract.marginPerLotRemote = val.marginPerLotRemote;
+            futureContract.marginPerLotSpot = val.marginPerLotSpot;
+            futureContract.minimumPriceChange = val.minimumPriceChange;
+            futureContract.price = val.price;
+            futureContract.tradingDaysAndHours = val.tradingDaysAndHours;
+            futureContracts.value.push(futureContract);
+          });
+        } else {
+          AddFutureContract();
+        }
+
         console.log("ress", futureContracts);
       } catch (error) {
         console.log("error", error);
@@ -319,7 +370,7 @@ export default {
     const saveFuture = async (future: IFutureContract) => {
       if (future.id) {
         isFetching.value = true;
-        const res = await productService.partialUpdate(future, future.id);
+        const res = await futureService.partialUpdate(future, future.id);
         if (res.data) {
           toast.success("Product Telah Di Perbarui", {
             position: "top-right",
@@ -338,7 +389,7 @@ export default {
         }
       } else {
         isFetching.value = true;
-        const res = await productService.create(future);
+        const res = await futureService.create(future);
         if (res.data) {
           toast.success("Product Berhasil Di Buat", {
             position: "top-right",
@@ -358,13 +409,15 @@ export default {
       }
     };
 
-    const save = async (id: number) => {
+    const save = async (id?: number) => {
       let product: IProduct = {
         id: state.id,
         name: state.name,
         desc: state.desc,
         attachmentId: id,
       };
+      console.log("product", product);
+
       if (product.id) {
         isFetching.value = true;
         const res = await productService.partialUpdate(product, product.id);
@@ -387,24 +440,17 @@ export default {
             };
             saveFuture(future);
           });
-          // toast.success("Product Telah Di Perbarui", {
-          //   position: "top-right",
-          //   timeout: 5000,
-          //   closeOnClick: true,
-          //   pauseOnFocusLoss: true,
-          //   pauseOnHover: true,
-          //   draggable: true,
-          //   draggablePercent: 0.6,
-          //   showCloseButtonOnHover: false,
-          //   hideProgressBar: true,
-          //   closeButton: "button",
-          //   icon: true,
-          //   rtl: false,
-          // });
+          router.replace({ path: "/produk" });
         }
       } else {
+        let formData = new FormData();
+        if (file.value) {
+          formData.append("attachment", file.value);
+          formData.append("name", state.name);
+          formData.append("desc", state.desc);
+        }
         isFetching.value = true;
-        const res = await productService.create(product);
+        const res = await productService.create(formData);
         if (res.data) {
           futureContracts.value.forEach((val) => {
             let future: IFutureContract = {
@@ -424,20 +470,7 @@ export default {
             };
             saveFuture(future);
           });
-          // toast.success("Product Berhasil Di Buat", {
-          //   position: "top-right",
-          //   timeout: 5000,
-          //   closeOnClick: true,
-          //   pauseOnFocusLoss: true,
-          //   pauseOnHover: true,
-          //   draggable: true,
-          //   draggablePercent: 0.6,
-          //   showCloseButtonOnHover: false,
-          //   hideProgressBar: true,
-          //   closeButton: "button",
-          //   icon: true,
-          //   rtl: false,
-          // });
+          router.replace({ path: "/produk" });
         }
       }
     };
@@ -447,14 +480,11 @@ export default {
         let formData = new FormData();
         formData.append("attachment", file.value);
         if (attachment.value.id) {
-          const res = await attachmentService.partialUpdate(formData);
+          const res = await attachmentService.update(
+            formData,
+            attachment.value.id
+          );
           if (res) {
-            save(res.data.id);
-          }
-        } else {
-          const res = await attachmentService.create(formData);
-          if (res) {
-            console.log("res", res);
             save(res.data.id);
           }
         }

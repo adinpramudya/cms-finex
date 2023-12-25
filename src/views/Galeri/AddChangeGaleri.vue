@@ -230,27 +230,6 @@ export default {
       }
     };
 
-    const saveImage = async () => {
-      if (file.value) {
-        let formData = new FormData();
-        formData.append("attachment", file.value);
-        if (attachment.value.id) {
-          const res = await attachmentService.partialUpdate(formData);
-          if (res) {
-            save(res.data.id);
-          }
-        } else {
-          const res = await attachmentService.create(formData);
-          if (res) {
-            console.log("res", res);
-            save(res.data.id);
-          }
-        }
-      } else {
-        save(attachment.value.id);
-      }
-    };
-
     return {
       state,
       v$,
@@ -258,7 +237,6 @@ export default {
       isValid,
       save,
       file,
-      saveImage,
     };
   },
 };

@@ -1,8 +1,9 @@
+import { IFutureContract } from "@/models/future-contract";
 import axios from "axios";
-const baseApiUrl = "https://api.finexkomoditi.id/v1/galleries";
+const baseApiUrl = "https://api.finexkomoditi.id/v1/futures-contracts";
 
-export class GaleriService {
-  find(id: number): Promise<any> {
+export class FutureService {
+  find(id: number): Promise<IFutureContract> {
     return new Promise<any>((resolve, reject) => {
       axios
         .get(`${baseApiUrl}/${id}`, {
@@ -18,19 +19,7 @@ export class GaleriService {
         });
     });
   }
-  retrieveCount(): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      axios
-        .get(baseApiUrl)
-        .then((res) => {
-          resolve(res.data.data.length);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  }
-  retrieve(): Promise<any> {
+  retrieve(): Promise<IFutureContract> {
     return new Promise<any>((resolve, reject) => {
       axios
         .get(baseApiUrl, {
@@ -47,7 +36,7 @@ export class GaleriService {
     });
   }
 
-  delete(id: number): Promise<any> {
+  delete(id: number): Promise<IFutureContract> {
     return new Promise<any>((resolve, reject) => {
       axios
         .delete(`${baseApiUrl}/${id}`, {
@@ -64,7 +53,8 @@ export class GaleriService {
     });
   }
 
-  create(entity: any): Promise<any> {
+  create(entity: IFutureContract): Promise<IFutureContract> {
+    delete entity.codeUnix;
     return new Promise<any>((resolve, reject) => {
       axios
         .post(`${baseApiUrl}`, entity, {
@@ -81,7 +71,7 @@ export class GaleriService {
     });
   }
 
-  update(entity: any): Promise<any> {
+  update(entity: any): Promise<IFutureContract> {
     return new Promise<any>((resolve, reject) => {
       axios
         .put(`${baseApiUrl}/${entity.id}`, entity)
@@ -94,8 +84,9 @@ export class GaleriService {
     });
   }
 
-  partialUpdate(entity: any, id: number): Promise<any> {
+  partialUpdate(entity: any, id: number): Promise<IFutureContract> {
     delete entity.id;
+    delete entity.codeUnix;
     return new Promise<any>((resolve, reject) => {
       axios
         .patch(`${baseApiUrl}/${id}`, entity, {
@@ -110,4 +101,4 @@ export class GaleriService {
     });
   }
 }
-export const galeriService = new GaleriService();
+export const futureService = new FutureService();

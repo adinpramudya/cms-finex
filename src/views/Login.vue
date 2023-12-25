@@ -52,7 +52,6 @@ const password = ref();
 const app = useAppStore();
 onMounted(() => {
   // const token =
-  console.log("tokenn", app.isTokenExpired);
 });
 
 const login = () => {
@@ -62,7 +61,7 @@ const login = () => {
       password: password.value,
     };
     app.login(body);
-    app.isTokenExpired();
+    app.isTokenExpired;
   }
 };
 </script>

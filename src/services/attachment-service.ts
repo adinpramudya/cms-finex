@@ -65,10 +65,12 @@ export class AttachmentService {
     });
   }
 
-  update(entity: any): Promise<any> {
+  update(entity: any, id: number): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios
-        .put(`${baseApiUrl}/${entity.id}`, entity)
+        .put(`${baseApiUrl}/${id}`, entity, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        })
         .then((res) => {
           resolve(res.data);
         })
@@ -78,10 +80,12 @@ export class AttachmentService {
     });
   }
 
-  partialUpdate(entity: any): Promise<any> {
+  partialUpdate(entity: any, id: number): Promise<any> {
+    console.log("id", id);
+
     return new Promise<any>((resolve, reject) => {
       axios
-        .patch(`${baseApiUrl}/${entity.id}`, entity, {
+        .patch(`${baseApiUrl}/${id}`, entity, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         .then((res) => {

@@ -23,6 +23,7 @@
         <v-list-item
           prepend-icon="mdi-view-gallery-outline"
           title="Galeri"
+          v-if="role == 'superadmin'"
           value="galeri"
           to="/galeri"
         ></v-list-item>
@@ -30,80 +31,16 @@
           prepend-icon="mdi-package"
           title="Produk"
           value="produk"
+          v-if="role == 'superadmin'"
           to="/produk"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-domain"
           title="Profil Perusahaan"
+          v-if="role == 'superadmin'"
           value="profil"
           to="/profile"
         ></v-list-item>
-        <!-- <v-list v-model:opened="open">
-          <v-list-group value="Users">
-            <template v-slot:activator="{ props }">
-              <v-list-item
-                prepend-icon="mdi-domain"
-                title="Profil Perusahaan"
-                v-bind="props"
-                style="font-size: 13px"
-              ></v-list-item>
-            </template>
-
-            <v-list-item
-              prepend-icon="mdi-google-maps"
-              title="Google Map"
-              value="Google Map"
-              to="/g-map"
-            ></v-list-item>
-            <v-list-item
-              prepend-icon="mdi-contacts"
-              title="Kontak"
-              to="/kontak"
-              value="Kontak"
-            ></v-list-item>
-            <v-list-item
-              prepend-icon="mdi-information-outline"
-              title="Disclaimer"
-              to="/disclaimer"
-              value="Disclaimer"
-            ></v-list-item>
-            <v-list-item
-              prepend-icon="mdi-instagram"
-              title="Link Media Social"
-              to="/social-media"
-              value="Link Media Social"
-            ></v-list-item>
-          </v-list-group>
-        </v-list> -->
-        <!-- <v-list v-model:opened="open">
-          <v-list-item
-            prepend-icon="mdi-domain"
-            title="Profil Perusahaan"
-            value="profil"
-          ></v-list-item>
-          <v-list-group value="Profile">
-            <v-list-item
-              value="props"
-              prepend-icon="mdi-account-circle"
-              title="Google Map"
-            ></v-list-item>
-            <v-list-item
-              value="props"
-              prepend-icon="mdi-account-circle"
-              title="Kontak"
-            ></v-list-item>
-            <v-list-item
-              value="props"
-              prepend-icon="mdi-account-circle"
-              title="Disclaimer"
-            ></v-list-item>
-            <v-list-item
-              value="props"
-              prepend-icon="mdi-account-circle"
-              title="Link Media Social"
-            ></v-list-item>
-          </v-list-group>
-        </v-list> -->
       </v-list>
     </v-navigation-drawer>
     <v-main style="height: 250px"></v-main>
@@ -126,6 +63,8 @@
 }
 </style>
 <script>
+import { useAppStore } from "@/store/app";
+
 export default {
   data() {
     return {
@@ -143,6 +82,11 @@ export default {
         ["Delete", "mdi-delete"],
       ],
     };
+  },
+  setup() {
+    const app = useAppStore();
+    const role = app.getRole;
+    return { role };
   },
 };
 </script>
