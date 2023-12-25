@@ -65,7 +65,7 @@ export const useAppStore = defineStore("app", {
       const data = localStorage.getItem("currentUser");
       const role = data ? JSON.parse(data) : null;
 
-      return role.role;
+      return role?.role;
     },
     autoLogout() {
       if (this.isTokenExpired) {
