@@ -32,22 +32,22 @@ export default {
     return {};
   },
   methods: {},
-  created() {
-    this.toast("Selamat Datang di Dashboard Admin", {
-      position: this.position,
-      timeout: false,
-      closeOnClick: false,
-      pauseOnFocusLoss: true,
-      pauseOnHover: true,
-      draggable: false,
-      draggablePercent: 0.6,
-      showCloseButtonOnHover: false,
-      hideProgressBar: true,
-      closeButton: "button",
-      icon: true,
-      rtl: false,
-    });
-  },
+  // created() {
+  //   this.toast("Selamat Datang di Dashboard Admin", {
+  //     position: this.position,
+  //     timeout: false,
+  //     closeOnClick: false,
+  //     pauseOnFocusLoss: true,
+  //     pauseOnHover: true,
+  //     draggable: false,
+  //     draggablePercent: 0.6,
+  //     showCloseButtonOnHover: false,
+  //     hideProgressBar: true,
+  //     closeButton: "button",
+  //     icon: true,
+  //     rtl: false,
+  //   });
+  // },
   setup() {
     const toast = useToast();
     const position: POSITION | undefined = "top-right" as POSITION;
@@ -83,9 +83,9 @@ export default {
           title: "Berita",
           value: resPost,
           image:
-            "https://res.cloudinary.com/dycicfqk1/image/upload/v1703496931/Attachments/gsemupxc5py4afalooyl.png",
-          imageBw:
             "https://res.cloudinary.com/dycicfqk1/image/upload/v1703496918/Attachments/lhk4yylfemongjiuoagm.png",
+          imageBw:
+            "https://res.cloudinary.com/dycicfqk1/image/upload/v1703496931/Attachments/gsemupxc5py4afalooyl.png",
         },
       ];
     };

@@ -33,7 +33,7 @@
                     <v-avatar color="brown">
                       <span class="text-h5">AD</span>
                     </v-avatar>
-                    <h3 class="mt-4">{{ currentUser.username }}</h3>
+                    <h3 class="mt-4">{{ currentUser?.username }}</h3>
 
                     <v-divider class="my-3"></v-divider>
                     <v-btn rounded variant="text" @click="logout">

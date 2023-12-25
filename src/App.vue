@@ -39,6 +39,7 @@ const router = useRouter();
 const app = useAppStore();
 onMounted(() => {
   app.autoLogout;
+  app.isAuthenticated;
   const unwatch = router.beforeEach((to, from, next) => {
     currentRoute.value = to;
 

@@ -78,7 +78,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const app = useAppStore();
   const isAuthenticated = app.isAuthenticated;
-  console.log("auth", app.isAuthenticated);
+  console.log("auth", isAuthenticated);
 
   if (
     to.matched.some((record) => record.meta.requiresAuth) &&

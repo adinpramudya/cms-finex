@@ -16,6 +16,9 @@ export const useAppStore = defineStore("app", {
     setToken(token: any) {
       this.token = token;
     },
+    setLoggedIn(login) {
+      this.isLoggedIn = login;
+    },
     async login(body: any) {
       const data = await axios
         .post("https://api.finexkomoditi.id/v1/administrators/auth/login", body)
@@ -25,6 +28,7 @@ export const useAppStore = defineStore("app", {
           this.setToken(res.data.data.access_token);
           localStorage.setItem("userLogin", res.data.data.name);
           localStorage.setItem("token", res.data.data.access_token);
+          this.isLoggedIn = true;
           router.push("/");
         })
         .catch((err) => {
@@ -33,12 +37,14 @@ export const useAppStore = defineStore("app", {
         });
     },
     logout(): void {
+      this.setLoggedIn(false);
       localStorage.removeItem("userLogin");
       localStorage.removeItem("token");
       localStorage.removeItem("currentUser");
-      this.userLogin = null;
-      this.token = null;
       router.push("/login");
+      this.userLogin = null;
+
+      this.token = null;
     },
   },
   getters: {
@@ -48,9 +54,11 @@ export const useAppStore = defineStore("app", {
         return true; // Token not set, consider it expired
       }
 
-      const decodedToken = jwtDecode(token);
+      const decodedToken: any = jwtDecode(token);
 
       localStorage.setItem("currentUser", JSON.stringify(decodedToken));
+      localStorage.setItem("username", decodedToken.username);
+      localStorage.setItem("role", decodedToken.role);
       this.isLoggedIn = true;
       const expirationTimestamp = decodedToken?.exp * 1000; // Convert seconds to milliseconds
 
@@ -58,14 +66,14 @@ export const useAppStore = defineStore("app", {
     },
     isAuthenticated() {
       const token = localStorage.getItem("token");
+      console.log("token", token);
+      console.log("login", this.isLoggedIn);
 
-      return !!token;
+      return !!token || this.isLoggedIn;
     },
     getRole() {
-      const data = localStorage.getItem("currentUser");
-      const role = data ? JSON.parse(data) : null;
-
-      return role?.role;
+      const role = localStorage.getItem("role");
+      return role;
     },
     autoLogout() {
       if (this.isTokenExpired) {
