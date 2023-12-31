@@ -10,6 +10,7 @@ export const useAppStore = defineStore("app", {
     token: null,
     userLogin: null,
     isLoggedIn: false,
+    isLoading: false,
     error: null,
   }),
   actions: {
@@ -20,15 +21,22 @@ export const useAppStore = defineStore("app", {
       this.isLoggedIn = login;
     },
     async login(body: any) {
+      this.isLoading = true;
       const data = await axios
         .post("https://api.finexkomoditi.id/v1/administrators/auth/login", body)
         .then((res: any) => {
           this.userLogin = res.data.data.name;
           this.token = res.data.data.access_token;
           this.setToken(res.data.data.access_token);
+          const decodedToken: any = jwtDecode(res.data.data.access_token);
+
+          localStorage.setItem("currentUser", JSON.stringify(decodedToken));
+          localStorage.setItem("username", decodedToken.username);
+          localStorage.setItem("role", decodedToken.role);
           localStorage.setItem("userLogin", res.data.data.name);
           localStorage.setItem("token", res.data.data.access_token);
           this.isLoggedIn = true;
+          this.isLoading = false;
           router.push("/");
         })
         .catch((err) => {
@@ -56,9 +64,6 @@ export const useAppStore = defineStore("app", {
 
       const decodedToken: any = jwtDecode(token);
 
-      localStorage.setItem("currentUser", JSON.stringify(decodedToken));
-      localStorage.setItem("username", decodedToken.username);
-      localStorage.setItem("role", decodedToken.role);
       this.isLoggedIn = true;
       const expirationTimestamp = decodedToken?.exp * 1000; // Convert seconds to milliseconds
 

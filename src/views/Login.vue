@@ -20,7 +20,9 @@
         prepend-inner-icon="mdi-account-key"
       ></v-text-field>
 
-      <v-btn color="#FFC93C" @click="login">MASUK</v-btn>
+      <v-btn color="#FFC93C" :loading="app.isLoading" @click="login"
+        >MASUK</v-btn
+      >
     </div>
   </div>
 </template>
