@@ -35,12 +35,16 @@ export const useAppStore = defineStore("app", {
           localStorage.setItem("role", decodedToken.role);
           localStorage.setItem("userLogin", res.data.data.name);
           localStorage.setItem("token", res.data.data.access_token);
+          window.location.reload();
           this.isLoggedIn = true;
           this.isLoading = false;
-          router.push("/");
+          setTimeout(() => {
+            router.push("/");
+          }, 100);
         })
         .catch((err) => {
-          console.log("error", err);
+          alert(err.message);
+          this.isLoading = false;
           this.error = err.message;
         });
     },
@@ -49,9 +53,10 @@ export const useAppStore = defineStore("app", {
       localStorage.removeItem("userLogin");
       localStorage.removeItem("token");
       localStorage.removeItem("currentUser");
+      localStorage.removeItem("role");
+      localStorage.removeItem("username");
       router.push("/login");
       this.userLogin = null;
-
       this.token = null;
     },
   },
