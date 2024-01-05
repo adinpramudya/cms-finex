@@ -3,26 +3,30 @@
     <div class="login">
       <img src="../assets/login.png" width="150" alt="login" />
       <h1 style="color: white">Admin Panel</h1>
-      <v-text-field
-        class="mt-5"
-        label="Username"
-        bg-color="#ffffff"
-        color="#000"
-        v-model="username"
-        prepend-inner-icon="mdi-account"
-      ></v-text-field>
-      <v-text-field
-        label="Password"
-        type="password"
-        bg-color="#ffffff"
-        color="#000"
-        v-model="password"
-        prepend-inner-icon="mdi-account-key"
-      ></v-text-field>
+      <form @submit="login">
+        <v-text-field
+          class="mt-5"
+          label="Username"
+          bg-color="#ffffff"
+          color="#000"
+          v-on:keyup.enter="login"
+          v-model="username"
+          prepend-inner-icon="mdi-account"
+        ></v-text-field>
+        <v-text-field
+          label="Password"
+          type="password"
+          v-on:keyup.enter="login"
+          bg-color="#ffffff"
+          color="#000"
+          v-model="password"
+          prepend-inner-icon="mdi-account-key"
+        ></v-text-field>
 
-      <v-btn color="#FFC93C" :loading="app.isLoading" @click="login"
-        >MASUK</v-btn
-      >
+        <v-btn color="#FFC93C" :loading="app.isLoading" @click="login"
+          >MASUK</v-btn
+        >
+      </form>
     </div>
   </div>
 </template>
@@ -64,6 +68,8 @@ const login = () => {
     };
     app.login(body);
     app.isTokenExpired;
+  } else {
+    alert("Username atau password tidak valid");
   }
 };
 </script>

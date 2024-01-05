@@ -23,7 +23,6 @@
         <v-list-item
           prepend-icon="mdi-view-gallery-outline"
           title="Galeri"
-          v-if="role == 'superadmin'"
           value="galeri"
           to="/galeri"
         ></v-list-item>
