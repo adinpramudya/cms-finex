@@ -65,7 +65,7 @@ export class PostService {
     });
   }
 
-  create(entity: IBerita): Promise<IBerita> {
+  create(entity: any): Promise<IBerita> {
     return new Promise<IBerita>((resolve, reject) => {
       axios
         .post(`${baseApiUrl}`, entity, {

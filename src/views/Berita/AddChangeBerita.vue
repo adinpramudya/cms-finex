@@ -48,6 +48,7 @@
     <v-btn
       class="mt-5 bg-wood color-sunglow"
       @click="saveImage"
+      :loading="isSaving"
       :disabled="!state.title || !state.image || !state.content"
     >
       submit
@@ -95,13 +96,6 @@ export default {
           "|",
           "bold",
           "italic",
-          "underline",
-          "strikethrough",
-          "|",
-          "fontColor",
-          "fontBackgroundColor",
-          "|",
-          "alignment",
           "|",
           "numberedList",
           "bulletedList",
@@ -115,13 +109,6 @@ export default {
           "redo",
           "|",
           "blockQuote",
-          "highlight",
-          "|",
-          "horizontalLine",
-          "removeFormat",
-          "|",
-          "specialCharacters",
-          "sourceEditing",
         ],
       } as any,
       selectedFiles: [],
@@ -167,6 +154,7 @@ export default {
 
   setup() {
     const isFetching = ref(false);
+    const isSaving = ref(false);
     const toast = useToast();
     const file = ref();
     let initialState = new Berita();
@@ -229,11 +217,10 @@ export default {
         ? JSON.parse(storedTokenString)
         : null;
     });
-    const save = async (id: number) => {
+    const save = async (id?: number) => {
       let berita: IBerita = {
         id: state.id,
         content: state.content,
-        status: "draft",
         title: state.title,
         attachmentId: id,
         authorId: currentUser.value.administratorId,
@@ -258,11 +245,18 @@ export default {
             icon: true,
             rtl: false,
           });
+          isSaving.value = false;
           router.go(-1);
         }
       } else {
         isFetching.value = true;
-        const res = await postService.create(berita);
+        let formData = new FormData();
+        formData.append("attachment", file.value);
+        formData.append("title", state.title);
+        formData.append("content", state.content);
+        formData.append("status", "publish");
+        formData.append("authorId", currentUser.value.administratorId);
+        const res = await postService.create(formData);
         if (res) {
           toast.success("Berita Berhasil Di Buat", {
             position: "top-right" as POSITION,
@@ -278,12 +272,14 @@ export default {
             icon: true,
             rtl: false,
           });
+          isSaving.value = false;
           router.go(-1);
         }
       }
     };
 
     const saveImage = async () => {
+      isSaving.value = true;
       if (file.value) {
         let formData = new FormData();
         formData.append("attachment", file.value);
@@ -296,11 +292,7 @@ export default {
             save(res.data.id);
           }
         } else {
-          const res = await attachmentService.create(formData);
-          if (res) {
-            console.log("res", res);
-            save(res.data.id);
-          }
+          save();
         }
       } else {
         save(attachment.value.id);
@@ -315,6 +307,7 @@ export default {
       save,
       saveImage,
       file,
+      isSaving,
     };
   },
 };

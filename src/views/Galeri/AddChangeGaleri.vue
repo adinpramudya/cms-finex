@@ -45,6 +45,7 @@
 
     <v-btn
       class="mt-5"
+      :loading="isSaving"
       :class="
         !state.caption || !state.image
           ? 'bg-silver color-wood'
@@ -138,6 +139,7 @@ export default {
     const initialState = new Galeri();
     const toast = useToast();
     const file = ref();
+    const isSaving = ref(false);
     const isFetching = ref(false);
     const route = useRoute();
     const attachment: Ref<IAttachment> = ref(new Attachment());
@@ -171,12 +173,10 @@ export default {
       try {
         isFetching.value = true;
         const res = await galeriService.find(post.id);
-        console.log("ress", res);
         state.id = res.id;
         state.caption = res.caption;
         state.image = res.url;
         attachment.value = res.attachment;
-        console.log("statee", res);
       } catch (error) {
         console.log("error", error);
         isFetching.value = false;
@@ -185,13 +185,12 @@ export default {
       }
     };
     onMounted(() => {
-      console.log("route", route.params);
-
       if (Object.keys(route.params).length > 0) {
         retrieveDataGaleri(route.params);
       }
     });
     const save = async (id: number) => {
+      isSaving.value = true;
       let galeri: IGaleri = {
         id: state.id,
         caption: state.caption,
@@ -202,7 +201,6 @@ export default {
       if (file.value) {
         formData.append("galleries", file.value);
       }
-      console.log("form fata", formData);
       if (galeri.id) {
         isFetching.value = true;
 
@@ -222,6 +220,7 @@ export default {
             icon: true,
             rtl: false,
           });
+          isSaving.value = false;
         }
         router.replace({ path: "/galeri" });
       } else {
@@ -242,6 +241,7 @@ export default {
             icon: true,
             rtl: false,
           });
+          isSaving.value = false;
         }
         router.replace({ path: "/galeri" });
       }
@@ -254,6 +254,7 @@ export default {
       isValid,
       save,
       file,
+      isSaving,
     };
   },
 };

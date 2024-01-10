@@ -18,7 +18,7 @@
           v-model="contactData.gmapUrl"
         ></v-text-field>
         <v-btn class="mr-4 bg-wood color-sunglow" @click="save"> Simpan </v-btn>
-        <v-btn class="bg-wood color-sunglow"> Batalkan </v-btn>
+        <!-- <v-btn class="bg-wood color-sunglow"> Batalkan </v-btn> -->
       </v-window-item>
 
       <v-window-item value="two">
@@ -53,7 +53,7 @@
           v-model="contactData.email"
         ></v-text-field>
         <v-btn class="mr-4 bg-wood color-sunglow" @click="save"> Simpan </v-btn>
-        <v-btn class="bg-wood color-sunglow"> Batalkan </v-btn>
+        <!-- <v-btn class="bg-wood color-sunglow"> Batalkan </v-btn> -->
       </v-window-item>
 
       <v-window-item value="three">
@@ -65,7 +65,7 @@
         <v-btn class="mr-4 bg-wood mt-2 color-sunglow" @click="save">
           Simpan
         </v-btn>
-        <v-btn class="bg-wood mt-2 color-sunglow"> Batalkan </v-btn>
+        <!-- <v-btn class="bg-wood mt-2 color-sunglow"> Batalkan </v-btn> -->
       </v-window-item>
     </v-window>
   </v-card-text>

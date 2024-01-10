@@ -64,6 +64,7 @@
         >
           <v-text-field
             class="mb-3"
+            :maxlength="10"
             v-model="future.code"
             :rules="fieldRules"
             label="Kode"
@@ -155,6 +156,7 @@
     </v-card-text>
 
     <v-btn
+      :loading="isSaving"
       class="bg-wood color-sunglow"
       @click="saveImage"
       :disabled="!validasiCheck"
@@ -282,6 +284,7 @@ export default {
     const initialStateFuture = new FutureContract();
     const futureContracts = ref<IFutureContract[]>([]);
     let isValid = ref(false);
+    const isSaving = ref(false);
     const route = useRoute();
     const file = ref();
 
@@ -450,6 +453,7 @@ export default {
             };
             saveFuture(future);
           });
+          isSaving.value = false;
           router.replace({ path: "/produk" });
         }
       } else {
@@ -480,12 +484,14 @@ export default {
             };
             saveFuture(future);
           });
+          isSaving.value = false;
           router.replace({ path: "/produk" });
         }
       }
     };
 
     const saveImage = async () => {
+      isSaving.value = true;
       if (file.value) {
         let formData = new FormData();
         formData.append("attachment", file.value);
@@ -497,9 +503,9 @@ export default {
           if (res) {
             save(res.data.id);
           }
+        } else {
+          save(attachment.value.id);
         }
-      } else {
-        save(attachment.value.id);
       }
     };
 
@@ -513,6 +519,7 @@ export default {
       futureContracts,
       file,
       saveImage,
+      isSaving,
     };
   },
 };
