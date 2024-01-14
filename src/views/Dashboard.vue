@@ -56,11 +56,18 @@ export default {
     const countBerita = ref(0);
     const card = ref();
     const countData = async () => {
-      const resPro = await productService.retrieveCount();
+      let resPro;
+      let resGaleri;
+      let resPost;
+      try {
+        resPro = await productService.retrieveCount();
+        resGaleri = await galeriService.retrieveCount();
+        resPost = await postService.retrieveCount();
+      } catch (error) {
+        console.log(error);
+      }
       countProduct.value = resPro;
-      const resGaleri = await galeriService.retrieveCount();
       countGaleri.value = resGaleri;
-      const resPost = await postService.retrieveCount();
       countBerita.value = resPost;
       card.value = [
         {

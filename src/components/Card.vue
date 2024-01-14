@@ -4,7 +4,7 @@
       <img :src="image" :alt="image" width="56" />
       <div class="ml-4">
         <h3 class="font-size-18 font-weight-300">{{ title }}</h3>
-        <p class="font-size-14 color-primary">{{ value }}</p>
+        <p class="font-size-14 color-primary">{{ value ? value : 0 }}</p>
       </div>
     </div>
     <img class="img-bw" :src="imageBw" :alt="imageBw" width="50" />
